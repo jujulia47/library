@@ -1,10 +1,10 @@
 import { z } from 'zod'
-import { prisma } from '../lib/prisma'
+import { prisma } from '../../lib/prisma'
 import { FastifyInstance } from 'fastify'
 
-export async function Book(server: FastifyInstance) {
+export async function GetBook( server: FastifyInstance ) {
 
-    //GET
+//------------------ GET------------------ 
     server.get('/book', async () => {
         const books = await prisma.book.findMany({
             include:{
@@ -12,8 +12,9 @@ export async function Book(server: FastifyInstance) {
             }
         })
         return books
-    })
+    })  
 
+    //Ex: PDP
     server.get('/book/:id', async (request) => {
         const idParam = z.object({
             id: z.string()
@@ -31,6 +32,8 @@ export async function Book(server: FastifyInstance) {
         })
         return book
     })
+
+//------------------ POST------------------ 
 
 // server.post('/user', async (request) => {
 //     // Cria um objeto Zod para definir o esquema de dados do frontend
@@ -71,6 +74,8 @@ export async function Book(server: FastifyInstance) {
 //     }
 // });
 
+//------------------ PUT------------------       
+
 // rota para editar um cadastro
 // server.put('/user/id/:id', async (request) => {
 //     // objeto zod para o id
@@ -102,6 +107,8 @@ export async function Book(server: FastifyInstance) {
 //     })
 //     return userUpdated
 // })
+
+    //DELETE
 
 // rota para remover um cadastro
 // server.delete('/user/id/:id', async (request) => {
