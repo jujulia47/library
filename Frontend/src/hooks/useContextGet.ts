@@ -10,17 +10,18 @@ const loading = 	{
 }
 
 const useContextGet = () => {
-  const [books, setBooks] = useState([loading]);
-    useEffect(() => {
-        async function getBooks(){
-            const fetchBooks = await fetch(`http://localhost:3333/book`)
-            const handleBooks = await fetchBooks.json()
-            setBooks(handleBooks)
-        }
-        getBooks()
-    }, [])  
+  const [numbers, setNumbers] = useState([loading]);
 
-  return { books };
+    // useEffect(() => {
+    //     async function getBooks(){
+    //         const fetchBooks = await fetch(`http://localhost:3333/book`)
+    //         const handleBooks = await fetchBooks.json()
+    //         setBooks(handleBooks)
+    //     }
+    //     getBooks()
+    // }, [])  
+
+  return [ numbers, setNumbers ];
 };
 
 export default useContextGet;

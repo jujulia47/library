@@ -1,21 +1,27 @@
 import React from 'react';
 import useContextGet from './hooks/useContextGet'
+import { GlobalStorage } from './context/index';
+
+import Home from './pages/Home/index'
+import NewBook from './pages/NewBook/index'
 // import './styles/css/App.css';
 
 function App() {
-  const { books } = useContextGet();
+  // const { books } = useContextGet();
   
   return (
-    <>
-      <div>{books.map((book) => {
+    <GlobalStorage>
+      {/* <div>{books.map((book) => {
         return (
           <>
             <p>{book?.title}</p>
             <img src={book?.image} alt="" />
           </>
         )
-      })}</div>
-    </>
+      })}</div> */}
+      <Home/>
+      <NewBook/>
+      </GlobalStorage>
   );
 }
 
