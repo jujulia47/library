@@ -1,6 +1,7 @@
 import React from 'react';
 import useContextGet from './hooks/useContextGet'
 import { GlobalStorage } from './context/index';
+import { GlobalStorageFlag } from './pages/Flag/context/index'
 
 import Home from './pages/Home/index'
 import NewBook from './pages/NewBook/index'
@@ -11,6 +12,7 @@ function App() {
   
   return (
     <GlobalStorage>
+      <GlobalStorageFlag>
       {/* <div>{books.map((book) => {
         return (
           <>
@@ -19,9 +21,10 @@ function App() {
           </>
         )
       })}</div> */}
-      <Home/>
-      <NewBook/>
-      </GlobalStorage>
+        <Home/>
+        <NewBook/>
+      </GlobalStorageFlag>
+    </GlobalStorage>
   );
 }
 

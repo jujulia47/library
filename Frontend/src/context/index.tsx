@@ -1,12 +1,18 @@
 import React, { createContext, useState, useEffect } from "react";
 
+interface Flag {
+  id: string;
+  flag: string;
+  created_at: string;
+}
+
 interface Book {
   title: string;
   author: string;
   image: string;
   category: string;
   rating: string;
-  flags: String[];
+  flags: Flag[];
 }
 
 export const GlobalContext = createContext(
@@ -51,7 +57,7 @@ export const GlobalStorage = ({ children }: any) => {
     image: string,
     category: string,
     rating: string,
-    flags: String[]
+    flags: Flag[]
   ) {
     await fetch(`http://localhost:3333/book`, {
       method: "POST",
@@ -70,7 +76,6 @@ export const GlobalStorage = ({ children }: any) => {
         "flags": flags,
       }),
     });
-    console.log('lalalalalalalalalala');
   }
 
   return (
