@@ -14,11 +14,16 @@ model Book {
   id          String    @id @default(uuid())
   title       String   
   author      String
-  image       String
   category    String
+  language    String
+  library     Boolean @default(false)
+  finish      Boolean @default(false)
+  date        String
+  image       String
   rating      String
-  created_at  DateTime
   flags       FlagsArray[]
+  quotes      QuotesArray[]
+  created_at  DateTime
   @@map("books")
 }
 
@@ -29,5 +34,14 @@ model FlagsArray {
   books       Book[]
   @@map("flags")
 }
+
+  model QuotesArray {
+    id            String   @id @default(uuid())
+    quote         String 
+    quoteId       String
+    book          Book @relation(fields: [quoteId], references: [id])
+    created_at    DateTime
+    @@map("quotes")
+  }
 
 

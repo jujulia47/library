@@ -10,20 +10,30 @@ export async function PostBook(server: FastifyInstance) {
     const bookBody = z.object({
       title: z.string(),
       author: z.string(),
-      image: z.string(),
       category: z.string(),
+      language: z.string(),
+      library: z.boolean(),
+      finish: z.boolean(),
+      date: z.string(),
+      image: z.string(),
       rating: z.string(),
       flags: z.array(z.string()), // Adiciona a propriedade 'flags' no corpo da requisição
+      quotes: z.array(z.string()),
     });
 
     // Recupera os dados do frontend
     const { 
       title, 
       author, 
+      category,
+      language,
+      library,
+      finish,
+      date, 
       image, 
-      category, 
       rating, 
-      flags 
+      flags,
+      quotes, 
     } = bookBody.parse(
       request.body
     );
@@ -58,8 +68,12 @@ export async function PostBook(server: FastifyInstance) {
       data: {
         title: title,
         author: author,
-        image: image,
         category: category,
+        language: language,
+        library: library,
+        finish: finish,
+        date: date,
+        image: image,
         rating: rating,
         created_at: new Date(),
         flags: {
@@ -67,9 +81,16 @@ export async function PostBook(server: FastifyInstance) {
             id: flag.id,
           })),
         },
+        quotes: {
+          create: quotes.map((quote) => ({
+            quote: quote,
+            created_at: new Date(),
+          })),
+        },
       },
       include: {
         flags: true,
+        quotes: true
       },
     });
 
