@@ -18,7 +18,7 @@ model Book {
   language    String
   library     Boolean @default(false)
   finish      Boolean @default(false)
-  date        String
+  finishDate  String
   image       String
   rating      String
   flags       FlagsArray[]

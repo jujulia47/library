@@ -8,7 +8,7 @@ export async function PostFlag(server: FastifyInstance) {
   server.post("/flag", async (request) => {
     // Cria um objeto Zod para definir o esquema de dados do frontend
     const bookBody = z.object({
-        flag: z.string()
+      flag: z.string(),
     });
 
     // Recupera os dados do frontend
@@ -30,8 +30,8 @@ export async function PostFlag(server: FastifyInstance) {
       // Insere a flag no banco de dados
       const newFlag = await prisma.flagsArray.create({
         data: {
-            flag: flag,
-            created_at: new Date()
+          flag: flag,
+          created_at: new Date(),
         },
       });
       return newFlag;

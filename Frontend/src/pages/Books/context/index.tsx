@@ -6,13 +6,25 @@ interface Flag {
   created_at: string;
 }
 
+interface Quote {
+  id:           String 
+  quote:         String 
+  quoteId:       String
+  created_at:    String
+}
+
 interface Book {
-  title: string;
-  author: string;
+  title: String;
+  author: String;
+  category: String;
+  language: String;
+  library: Boolean;
+  finish: Boolean;
+  finishDate: String;
   image: string;
-  category: string;
-  rating: string;
+  rating: String;
   flags: Flag[];
+  quotes: Quote[]
 }
 
 export const GlobalContext = createContext(
@@ -20,6 +32,7 @@ export const GlobalContext = createContext(
     books: Book[];
     postBooks: any;
     setBooks: any;
+    getBooks: any
   }
 );
 
@@ -28,10 +41,15 @@ export const GlobalStorage = ({ children }: any) => {
     {
       title: "",
       author: "",
-      image: "",
       category: "",
+      language: "",
+      library: false,
+      finish: false,
+      finishDate: "",
+      image: "",
       rating: "",
       flags: [],
+      quotes: []
     },
   ]);
 
@@ -52,12 +70,17 @@ export const GlobalStorage = ({ children }: any) => {
   //funciona, mas por algum motivo não atualiza o banco de primeira 
   // revisar a flag, está com erro
   async function postBooks(
-    title: string,
-    author: string,
-    image: string,
-    category: string,
-    rating: string,
-    flags: Flag[]
+    title: String,
+    author: String,
+    category: String,
+    language: String,
+    library: Boolean,
+    finish: Boolean,
+    finishDate: String,
+    image: String,
+    rating: String,
+    flags: Flag[],
+    quotes: Quote[]
   ) {
     await fetch(`http://localhost:3333/book`, {
       method: "POST",
@@ -70,20 +93,26 @@ export const GlobalStorage = ({ children }: any) => {
       body: JSON.stringify({
         "title": title,
         "author": author,
-        "image": image,
         "category": category,
+        "language": language,
+        "library": library,
+        "finish": finish,
+        "finishDate": finishDate,
+        "image": image,
         "rating": rating,
         "flags": flags,
+        "quotes": [quotes]
       }),
     });
   }
-
+  
   return (
     <GlobalContext.Provider
       value={{
         books,
         setBooks,
-        postBooks
+        postBooks,
+        getBooks
       }}
     >
       {children}

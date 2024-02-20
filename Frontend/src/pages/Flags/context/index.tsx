@@ -27,7 +27,6 @@ export const GlobalStorageFlag = ({ children }: any) => {
     const fetchFlags = await fetch(`http://localhost:3333/flag`);
     const handleFlags = await fetchFlags.json();
     setFlags(handleFlags);
-    console.log("Flags123", handleFlags);
   }
   useEffect(() => {
     getFlags();

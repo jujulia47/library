@@ -7,7 +7,7 @@ CREATE TABLE "books" (
     "language" TEXT NOT NULL,
     "library" BOOLEAN NOT NULL DEFAULT false,
     "finish" BOOLEAN NOT NULL DEFAULT false,
-    "date" TEXT NOT NULL,
+    "finishDate" TEXT NOT NULL,
     "image" TEXT NOT NULL,
     "rating" TEXT NOT NULL,
     "created_at" DATETIME NOT NULL

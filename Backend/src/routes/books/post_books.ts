@@ -14,7 +14,7 @@ export async function PostBook(server: FastifyInstance) {
       language: z.string(),
       library: z.boolean(),
       finish: z.boolean(),
-      date: z.string(),
+      finishDate: z.string(),
       image: z.string(),
       rating: z.string(),
       flags: z.array(z.string()), // Adiciona a propriedade 'flags' no corpo da requisição
@@ -22,21 +22,19 @@ export async function PostBook(server: FastifyInstance) {
     });
 
     // Recupera os dados do frontend
-    const { 
-      title, 
-      author, 
+    const {
+      title,
+      author,
       category,
       language,
       library,
       finish,
-      date, 
-      image, 
-      rating, 
+      finishDate,
+      image,
+      rating,
       flags,
-      quotes, 
-    } = bookBody.parse(
-      request.body
-    );
+      quotes,
+    } = bookBody.parse(request.body);
 
     let createdFlags = [];
 
@@ -72,7 +70,7 @@ export async function PostBook(server: FastifyInstance) {
         language: language,
         library: library,
         finish: finish,
-        date: date,
+        finishDate: finishDate,
         image: image,
         rating: rating,
         created_at: new Date(),
@@ -90,7 +88,7 @@ export async function PostBook(server: FastifyInstance) {
       },
       include: {
         flags: true,
-        quotes: true
+        quotes: true,
       },
     });
 
