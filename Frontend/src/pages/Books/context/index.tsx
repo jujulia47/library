@@ -58,17 +58,12 @@ export const GlobalStorage = ({ children }: any) => {
     const fetchBooks = await fetch(`http://localhost:3333/book`);
     const handleBooks = await fetchBooks.json();
     setBooks(handleBooks);
-    console.log("Livros", handleBooks);
   }
   useEffect(() => {
     getBooks();
   }, []);
 
   //POST
-
-  //dessa forma a requisão não vai de primeira pro banco
-  //funciona, mas por algum motivo não atualiza o banco de primeira 
-  // revisar a flag, está com erro
   async function postBooks(
     title: String,
     author: String,
@@ -87,9 +82,6 @@ export const GlobalStorage = ({ children }: any) => {
       headers: {
         "Content-Type": "application/json",
       },
-      //Corpo (body) => contém os dados que serão enviandos para o servidor.
-      //No contexto de uma requisição POST para cadastrar um livro em um banco de dados,
-      //o corpo da requisição é onde se coloca os detalhes do livro que deseja enviar para a API.
       body: JSON.stringify({
         "title": title,
         "author": author,

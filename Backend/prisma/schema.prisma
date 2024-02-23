@@ -19,6 +19,8 @@ model Book {
   library     Boolean @default(false)
   finish      Boolean @default(false)
   finishDate  String
+  //data de início
+  // coleção => exemplo (Livros favoritos que vão ser exibidos na home)
   image       String
   rating      String
   flags       FlagsArray[]

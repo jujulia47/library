@@ -1,11 +1,11 @@
 import React from 'react';
-import useContextGet from './hooks/useContextGet'
+// import useContextGet from './hooks/useContextGet'
 import { GlobalStorage } from './pages/Books/context/index';
-import { GlobalStorageFlag } from './pages/Flag/context/index'
+import { GlobalStorageFlag } from './pages/Flags/context/index'
 
 import Home from './pages/Home/index'
-import NewBook from './pages/Books/NewBook/index'
-// import './styles/css/App.css';
+// import NewBook from './pages/Books/NewBook/index'
+import './styles/css/index.css';
 
 function App() {
   // const { books } = useContextGet();
@@ -13,16 +13,8 @@ function App() {
   return (
     <GlobalStorage>
       <GlobalStorageFlag>
-      {/* <div>{books.map((book) => {
-        return (
-          <>
-            <p>{book?.title}</p>
-            <img src={book?.image} alt="" />
-          </>
-        )
-      })}</div> */}
         <Home/>
-        <NewBook/>
+        {/* <NewBook/> */}
       </GlobalStorageFlag>
     </GlobalStorage>
   );

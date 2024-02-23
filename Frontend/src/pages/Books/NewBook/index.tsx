@@ -1,15 +1,13 @@
 import React, { useContext, useEffect } from "react";
-// import useContext from '../../context/index'
 import { GlobalContext } from "../context/index";
 import { FLagGlobalContext } from "../../../pages/Flags/context/index";
 
 function NewBook() {
-  const { postBooks, setBooks } = useContext(GlobalContext);
+  const { postBooks } = useContext(GlobalContext);
   const { flags } = useContext(FLagGlobalContext);
 
   const submitForm = (events: any) => {
     events.preventDefault();
-    console.log("evento", events.target);
     const {
       title,
       author,
@@ -24,8 +22,6 @@ function NewBook() {
       flagsCustom,
       quotes,
     } = events.target;
-
-    // console.log(finish, "finish");
 
     const teste = [] as String[];
 
@@ -72,16 +68,12 @@ function NewBook() {
             placeholder="Titulo do Livro"
           />
         </div>
-
         <br/>
-
         <div>
           <label htmlFor="">Autor</label>
           <input type="text" name="author" id="author" placeholder="Autor" />
         </div>
-
         <br/>
-
         <div>
           <label htmlFor="">Categoria</label>
           <input
@@ -91,9 +83,7 @@ function NewBook() {
             placeholder="Categoria"
           />
         </div>
-
         <br/>
-
         <div>
           <label htmlFor="">Idioma</label>
           <select name="language" id="language">
@@ -102,7 +92,6 @@ function NewBook() {
           </select>
         </div>
         <br/>
-
         <div>
           <label htmlFor="library" id="library">Biblioteca</label>
           <br/>
@@ -112,9 +101,7 @@ function NewBook() {
           <input type="radio" id="false" name="library" value="false"/>
           <label htmlFor="">Não</label>
         </div>
-
         <br/>
-
         <div>
           <label htmlFor="finish" id="finish">Lido</label>
           <br/>
@@ -124,22 +111,17 @@ function NewBook() {
           <input type="radio" id="false" name="finish" value="false"/>
           <label htmlFor="">Não</label>
         </div>
-
         <br/>
         <div>
           <label htmlFor="">Data da Leitrua</label>
           <input type="text" name="finishDate" id="finishDate" placeholder="finishDate" />
         </div>
-
         <br/>
-        
         <div>
           <label htmlFor="">Imagem</label>
           <input type="text" name="image" id="image" placeholder="Imagem" />
         </div>
-        
         <br/>
-
         <div>
           <label htmlFor="">Avaliação</label>
           <input
@@ -149,9 +131,7 @@ function NewBook() {
             placeholder="Avaliação"
           />
         </div>
-
         <br/>
-
         <div>
           {flags.map((flag, index) => {
             return (
@@ -163,7 +143,6 @@ function NewBook() {
                 <input
                   type="checkbox"
                   name="flags"
-                  // id={`inputFlag${index}`}
                   value={flag.flag}
                 />
                 {flag.flag}
@@ -176,16 +155,6 @@ function NewBook() {
           </label>
           <input type="text" name="flagsCustom" />
         </div>
-
-        {/* <select name="flag" id="flag">
-          {flags.map((flag) => {
-            return (
-              <option value={flag.flag}>
-                {flag.flag}
-              </option>
-            )
-          })}
-        </select> */}
         <br/>
         <div>
           <label htmlFor="">Book Quotes</label>
