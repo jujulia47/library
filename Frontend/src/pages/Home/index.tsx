@@ -1,4 +1,5 @@
 import React from 'react'
+import Clock from './Clock'
 import '../../styles/css/pages/Home/index.css'
 
 function Home() {
@@ -7,6 +8,7 @@ function Home() {
     <>
       <section>
         <img src="banner-home.jpeg" alt="" className='banner-home'/>
+        <Clock />
       </section>
     </>
   )
