@@ -11,39 +11,74 @@ datasource db {
 }
 
 model Book {
-  id          String    @id @default(uuid())
-  title       String   
-  author      String
-  category    String
-  language    String
-  library     Boolean @default(false)
-  finish      Boolean @default(false)
-  finishDate  String
-  //data de início
-  // coleção => exemplo (Livros favoritos que vão ser exibidos na home)
-  image       String
-  rating      String
-  flags       FlagsArray[]
-  quotes      QuotesArray[]
-  created_at  DateTime
+  id         String           @id @default(uuid())
+  image      String
+  title      String           @unique()
+  serie      Serie            @relation(fields: [seriesId], references: [id])
+  seriesId   String
+  author     String
+  category   String
+  language   String
+  library    Boolean          @default(false)
+  initDate   String
+  finishDate String
+  finish     Boolean          @default(false)
+  rating     String
+  flags      FlagsArray[]
+  quotes     QuotesArray[]
+  colection  ColectionArray[]
+  created_at DateTime
+
   @@map("books")
 }
 
+model Serie {
+  id         String   @id @default(uuid())
+  serieName  String   @unique()
+  concluded  Boolean  @default(false)
+  abandoned  Boolean  @default(false)
+  books      Book[]
+  created_at DateTime
+
+  @@map("series")
+}
+
 model FlagsArray {
-  id          String   @id @default(uuid())
-  flag        String 
-  created_at  DateTime
-  books       Book[]
+  id         String   @id @default(uuid())
+  flag       String   @unique()
+  books      Book[]
+  created_at DateTime
+
   @@map("flags")
 }
 
-  model QuotesArray {
-    id            String   @id @default(uuid())
-    quote         String 
-    quoteId       String
-    book          Book @relation(fields: [quoteId], references: [id])
-    created_at    DateTime
-    @@map("quotes")
-  }
+model QuotesArray {
+  id         String   @id @default(uuid())
+  quote      String   @unique()
+  quoteId    String
+  book       Book     @relation(fields: [quoteId], references: [id])
+  created_at DateTime
 
+  @@map("quotes")
+}
 
+model ColectionArray {
+  id         String     @id @default(uuid())
+  colection  String     @unique()
+  books      Book[]
+  wishlist   Wishlist[]
+  created_at DateTime
+
+  @@map("colections")
+}
+
+model Wishlist {
+  id          String           @id @default(uuid())
+  bookTitle   String
+  bookImage   String
+  link        String
+  colection   ColectionArray[]
+  created_at  DateTime
+
+  @@map("wishlist")
+}

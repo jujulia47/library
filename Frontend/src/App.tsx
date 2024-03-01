@@ -4,7 +4,7 @@ import { GlobalStorage } from './pages/Books/context/index';
 import { GlobalStorageFlag } from './pages/Flags/context/index'
 
 import Home from './pages/Home/index'
-// import NewBook from './pages/Books/NewBook/index'
+import NewBook from './pages/Books/NewBook/index'
 import './styles/css/index.css';
 
 function App() {
@@ -13,8 +13,8 @@ function App() {
   return (
     <GlobalStorage>
       <GlobalStorageFlag>
-        <Home/>
-        {/* <NewBook/> */}
+        {/* <Home/> */}
+        <NewBook/>
       </GlobalStorageFlag>
     </GlobalStorage>
   );

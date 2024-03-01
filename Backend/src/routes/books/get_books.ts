@@ -7,8 +7,28 @@ export async function GetBook(server: FastifyInstance) {
   server.get("/book", async () => {
     const books = await prisma.book.findMany({
       include: {
-        flags: true,
-        quotes: true,
+        serie: {
+          select: {
+            serieName: true,
+            concluded: true,
+            abandoned: true
+          }
+        },
+        flags: {
+          select: {
+            flag: true
+          }
+        },
+        quotes: {
+          select: {
+            quote: true
+          }
+        },
+        colection: {
+          select: {
+            colection: true
+          }
+        }
       },
     });
     return books;
@@ -27,8 +47,28 @@ export async function GetBook(server: FastifyInstance) {
         title: id,
       },
       include: {
-        flags: true,
-        quotes: true,
+        serie: {
+          select: {
+            serieName: true,
+            concluded: true,
+            abandoned: true
+          }
+        },
+        flags: {
+          select: {
+            flag: true
+          }
+        },
+        quotes: {
+          select: {
+            quote: true
+          }
+        },
+        colection: {
+          select: {
+            colection: true
+          }
+        }
       },
     });
     return book;

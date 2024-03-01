@@ -7,21 +7,21 @@ export async function PostFlag(server: FastifyInstance) {
 
   server.post("/flag", async (request) => {
     // Cria um objeto Zod para definir o esquema de dados do frontend
-    const bookBody = z.object({
+    const flagBody = z.object({
       flag: z.string(),
     });
 
     // Recupera os dados do frontend
-    const { flag } = bookBody.parse(request.body);
+    const { flag } = flagBody.parse(request.body);
 
     // Verifica se a flag já está em uso
-    const existingBook = await prisma.flagsArray.findFirst({
+    const existingFlag = await prisma.flagsArray.findFirst({
       where: {
         flag: flag,
       },
     });
 
-    if (existingBook) {
+    if (existingFlag) {
       // Livro já cadastrado, retornar uma resposta de erro
       return {
         error: "Flag já cadastrada",
