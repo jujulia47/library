@@ -5,6 +5,7 @@ const server = Fastify()
 
 server.register(cors)
 
+//GET
 import { GetBook } from './routes/books/get_books'
 import { GetFlag } from './routes/flags/get_flags'
 import { GetSerie } from './routes/series/get_series'
@@ -12,6 +13,7 @@ import { GetQuote } from './routes/quotes/get_quotes'
 import { GetColections } from './routes/colections/get_colections'
 import { GetWishlist } from './routes/wishlist/get_wishlist'
 
+//POST
 import { PostBook } from './routes/books/post_books'
 import { PostFlag } from './routes/flags/post_flags'
 import { PostSerie } from './routes/series/post_series'
@@ -19,6 +21,13 @@ import { PostQuote } from './routes/quotes/post_quotes'
 import { PostColection } from './routes/colections/post_colection'
 import { PostWishlist } from './routes/wishlist/post_wishlist'
 
+//DELETE
+import { DeleteBook } from './routes/books/delete_books'
+import { DeleteSerie } from './routes/series/delete_series'
+import { DeleteFlag } from './routes/flags/delete_flag'
+import { DeleteQuote } from './routes/quotes/delete_quotes'
+import { DeleteColection } from './routes/colections/delete_colection'
+import { DeleteWishlist } from './routes/wishlist/delete_wishlist'
 
 server.register(GetBook)
 server.register(GetFlag)
@@ -33,6 +42,13 @@ server.register(PostSerie)
 server.register(PostQuote)
 server.register(PostColection)
 server.register(PostWishlist)
+
+server.register(DeleteBook)
+server.register(DeleteSerie)
+server.register(DeleteFlag)
+server.register(DeleteQuote)
+server.register(DeleteColection)
+server.register(DeleteWishlist)
 
 server.listen({
     port: 3333,

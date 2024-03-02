@@ -14,8 +14,8 @@ model Book {
   id         String           @id @default(uuid())
   image      String
   title      String           @unique()
-  serie      Serie            @relation(fields: [seriesId], references: [id])
-  seriesId   String
+  serie      Serie?            @relation(fields: [seriesId], references: [id])
+  seriesId   String?
   author     String
   category   String
   language   String
@@ -56,7 +56,7 @@ model QuotesArray {
   id         String   @id @default(uuid())
   quote      String   @unique()
   quoteId    String
-  book       Book     @relation(fields: [quoteId], references: [id])
+  book       Book     @relation(fields: [quoteId], references: [id], onDelete: Cascade)
   created_at DateTime
 
   @@map("quotes")
