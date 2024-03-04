@@ -29,6 +29,14 @@ import { DeleteQuote } from './routes/quotes/delete_quotes'
 import { DeleteColection } from './routes/colections/delete_colection'
 import { DeleteWishlist } from './routes/wishlist/delete_wishlist'
 
+//PATCH
+import { PatchBook } from './routes/books/patch_books'
+import { PatchSerie } from './routes/series/patch_series'
+import { PatchFlag } from './routes/flags/patch_flag'
+import { PatchQuote } from './routes/quotes/patch_quotes'
+import { PatchColection } from './routes/colections/patch_colection'
+import { PatchWishlist } from './routes/wishlist/patch_wishlist'
+
 server.register(GetBook)
 server.register(GetFlag)
 server.register(GetSerie)
@@ -49,6 +57,15 @@ server.register(DeleteFlag)
 server.register(DeleteQuote)
 server.register(DeleteColection)
 server.register(DeleteWishlist)
+
+server.register(PatchBook)
+server.register(PatchSerie)
+server.register(PatchFlag)
+server.register(PatchQuote)
+server.register(PatchColection)
+server.register(PatchWishlist)
+
+
 
 server.listen({
     port: 3333,
