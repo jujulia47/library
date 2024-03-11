@@ -6,34 +6,25 @@ export async function PostSerie(server: FastifyInstance) {
   //------------------ POST------------------
 
   server.post("/serie", async (request) => {
-    // Cria um objeto Zod para definir o esquema de dados do frontend
     const serieBody = z.object({
-        serieName: z.string(),
-        concluded: z.boolean(),
-        abandoned: z.boolean()
+      serieName: z.string(),
+      concluded: z.boolean(),
+      abandoned: z.boolean(),
     });
 
-    // Recupera os dados do frontend
-    const { 
-        serieName, 
-        concluded, 
-        abandoned
-    } = serieBody.parse(request.body);
+    const { serieName, concluded, abandoned } = serieBody.parse(request.body);
 
-    // Verifica se a flag já está em uso
-    const existingSerie = await prisma.serie.findFirst({
+    const findSerie = await prisma.serie.findFirst({
       where: {
-        serieName: serieName
+        serieName: serieName,
       },
     });
 
-    if (existingSerie) {
-      // Livro já cadastrado, retornar uma resposta de erro
+    if (findSerie) {
       return {
         error: "Serie já cadastrada",
       };
     } else {
-      // Insere a flag no banco de dados
       const newSerie = await prisma.serie.create({
         data: {
           serieName: serieName,

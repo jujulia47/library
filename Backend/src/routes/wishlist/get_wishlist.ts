@@ -5,16 +5,16 @@ import { FastifyInstance } from "fastify";
 export async function GetWishlist(server: FastifyInstance) {
   //------------------ GET------------------
   server.get("/wishlist", async () => {
-    const wishlist = await prisma.wishlist.findMany({
+    const getWishlist = await prisma.wishlist.findMany({
       include: {
-        colection: {
+        collection: {
           select: {
-            colection: true,
+            collectionName: true,
           },
         },
       },
     });
-    return wishlist;
+    return getWishlist;
   });
 
   //Ex: PDP
@@ -25,18 +25,18 @@ export async function GetWishlist(server: FastifyInstance) {
 
     const { id } = idParam.parse(request.params);
 
-    const wishlist = prisma.wishlist.findFirst({
+    const getWishlistId = prisma.wishlist.findFirst({
       where: {
         bookTitle: id,
       },
       include: {
-        colection: {
+        collection: {
           select: {
-            colection: true,
+            collectionName: true,
           },
         },
       },
     });
-    return wishlist;
+    return getWishlistId;
   });
 }

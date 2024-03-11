@@ -2,15 +2,15 @@ import { z } from "zod";
 import { prisma } from "../../lib/prisma";
 import { FastifyInstance } from "fastify";
 
-export async function DeleteFlag(server: FastifyInstance) {
+export async function DeleteCollection(server: FastifyInstance) {
   //------------DELETE-------------
-  server.delete("/flag/id/:id", async (request) => {
+  server.delete("/collection/id/:id", async (request) => {
     const idParam = z.object({
       id: z.string().uuid(),
     });
     const { id } = idParam.parse(request.params);
 
-    const deleteFlag = await prisma.flagsArray.delete({
+    const deleteCollection = await prisma.collectionArray.delete({
       where: {
         id,
       },
@@ -20,8 +20,13 @@ export async function DeleteFlag(server: FastifyInstance) {
             title: true,
           },
         },
+        wishlist: {
+          select: {
+            bookTitle: true,
+          },
+        },
       },
     });
-    return deleteFlag;
+    return deleteCollection;
   });
 }

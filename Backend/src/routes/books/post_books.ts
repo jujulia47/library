@@ -6,15 +6,10 @@ export async function PostBook(server: FastifyInstance) {
   //------------------ POST------------------
 
   server.post("/book", async (request) => {
-    // Cria um objeto Zod para definir o esquema de dados do frontend
-    const bookBody = z.object({
+    const postBook = z.object({
       image: z.string(),
       title: z.string(),
-      serie: z.object({
-        serieName: z.string(),
-        concluded: z.boolean(),
-        abandoned: z.boolean(),
-      }),
+      serieName: z.string().nullable(),
       author: z.string(),
       category: z.string(),
       language: z.string(),
@@ -24,15 +19,14 @@ export async function PostBook(server: FastifyInstance) {
       finish: z.boolean(),
       rating: z.string(),
       flags: z.array(z.string()),
-      quotes: z.array(z.string()),
-      colection: z.array(z.string()),
+      quotes: z.array(z.string()).default([]),
+      collections: z.array(z.string()),
     });
 
-    // Recupera os dados do frontend
     const {
       image,
       title,
-      serie: { serieName, concluded, abandoned },
+      serieName,
       author,
       category,
       language,
@@ -43,85 +37,77 @@ export async function PostBook(server: FastifyInstance) {
       rating,
       flags,
       quotes,
-      colection,
-    } = bookBody.parse(request.body);
+      collections,
+    } = postBook.parse(request.body);
 
     let createdFlags = [];
-    let createdColection = [];
+    let createdCollection = [];
+    let serieConnect = {};
 
-    // Para cada flag no array, verifique se ela já existe no banco de dados
     for (const flag of flags) {
-      const existingFlag = await prisma.flagsArray.findFirst({
-        where: {
-          flag: flag,
-        },
-      });
-
-      if (existingFlag) {
-        // Se a flag já existir, adicione-a ao array de flags criadas
-        createdFlags.push(existingFlag);
-      } else {
-        // Se a flag não existir, crie-a e adicione-a ao array de flags criadas
-        const newFlag = await prisma.flagsArray.create({
-          data: {
+      if (flag.trim() != "") {
+        const findFlag = await prisma.flagsArray.findFirst({
+          where: {
             flag: flag,
-            created_at: new Date(),
           },
         });
-        createdFlags.push(newFlag);
+        if (findFlag) {
+          createdFlags.push(findFlag);
+        } else {
+          const newFlag = await prisma.flagsArray.create({
+            data: {
+              flag: flag,
+              created_at: new Date(),
+            },
+          });
+          createdFlags.push(newFlag);
+        }
       }
     }
 
-    // Para cada item na coleção, verifique se ele já existe no banco de dados
-    for (const colectionItem of colection) {
-      const existingColectionItem = await prisma.colectionArray.findFirst({
+    for (const collection of collections) {
+      if (collection.trim() !== "") {
+        const findCollection = await prisma.collectionArray.findFirst({
+          where: {
+            collectionName: collection,
+          },
+        });
+
+        if (findCollection) {
+          createdCollection.push(findCollection);
+        } else {
+          const newCollection = await prisma.collectionArray.create({
+            data: {
+              collectionName: collection,
+              created_at: new Date(),
+            },
+          });
+          createdCollection.push(newCollection);
+        }
+      }
+    }
+
+    if (serieName) {
+      const findSerie = await prisma.serie.findFirst({
         where: {
-          colection: colectionItem,
+          serieName: serieName,
         },
       });
 
-      if (existingColectionItem) {
-        // Se o item da coleção já existir, adicione-o ao array de itens da coleção criados
-        createdColection.push(existingColectionItem);
-      } else {
-        // Se o item da coleção não existir, crie-o e adicione-o ao array de itens da coleção criados
-        const newColectionItem = await prisma.colectionArray.create({
-          data: {
-            colection: colectionItem,
-            created_at: new Date(),
-          },
-        });
-        createdColection.push(newColectionItem);
+      if (!findSerie) {
+        return {
+          error: "A série não foi encontrada.",
+        };
       }
+      // Use o ID do livro encontrado para conectar a citação ao livro
+      serieConnect = { connect: { id: findSerie.id } };
     }
 
-    // Verifica se a série já existe no banco de dados
-    let existingSerie = await prisma.serie.findFirst({
-      where: {
-        serieName: serieName,
-      },
-    });
-
-    // Se a série já existir, use-a, senão, crie uma nova série
-    if (!existingSerie) {
-      existingSerie = await prisma.serie.create({
-        data: {
-          serieName,
-          concluded,
-          abandoned,
-          created_at: new Date(),
-        },
-      });
-    }
-
-    // Insere o livro no banco de dados, conectando-o às flags criadas
     const newBook = await prisma.book.create({
       data: {
         image: image,
         title: title,
-        serie: {
-          connect: { id: existingSerie.id }, // Conecta o livro à série existente ou recém-criada
-        },
+        serie: serieConnect,
         author: author,
         category: category,
         language: language,
@@ -136,14 +122,16 @@ export async function PostBook(server: FastifyInstance) {
           })),
         },
         quotes: {
-          create: quotes.map((quote) => ({
-            quote: quote,
-            created_at: new Date(),
-          })),
+          create: quotes
+            .filter((quote) => quote.trim() !== "")
+            .map((quote) => ({
+              quote: quote,
+              created_at: new Date(),
+            })),
         },
-        colection: {
-          connect: createdColection.map((colectionItem) => ({
-            id: colectionItem.id,
+        collection: {
+          connect: createdCollection.map((collectionItem) => ({
+            id: collectionItem.id,
           })),
         },
         created_at: new Date(),
@@ -153,24 +141,24 @@ export async function PostBook(server: FastifyInstance) {
           select: {
             serieName: true,
             concluded: true,
-            abandoned: true
-          }
+            abandoned: true,
+          },
         },
         flags: {
           select: {
-            flag: true
-          }
+            flag: true,
+          },
         },
         quotes: {
           select: {
-            quote: true
-          }
+            quote: true,
+          },
         },
-        colection: {
+        collection: {
           select: {
-            colection: true
-          }
-        }
+            collectionName: true,
+          },
+        },
       },
     });
 

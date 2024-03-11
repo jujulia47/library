@@ -8,33 +8,47 @@ export async function PostQuote(server: FastifyInstance) {
   server.post("/quote", async (request) => {
     const quoteBody = z.object({
       quote: z.string(),
-      bookId: z.string()
+      bookName: z.string().nullable(),
     });
 
-    const {
-      quote,
-      bookId,
-    } = quoteBody.parse(request.body);
+    const { quote, bookName } = quoteBody.parse(request.body);
 
-    const existingQuote = await prisma.quotesArray.findFirst({
+    let bookConnect = {};
+
+    if (bookName) {
+      const findBook = await prisma.book.findFirst({
+        where: {
+          title: bookName,
+        },
+      });
+
+      if (!findBook) {
+        return {
+          error: "O livro não foi encontrado.",
+        };
+      }
+
+      bookConnect = { connect: { id: findBook.id } };
+    }
+
+    const findQuote = await prisma.quotesArray.findFirst({
       where: {
         quote: quote,
       },
     });
 
-    if (existingQuote) {
+    if (findQuote) {
       return {
-        error: "Citação já cadastrado",
+        error: "Citação já cadastrada",
       };
     } else {
       const newQuote = await prisma.quotesArray.create({
         data: {
           quote: quote,
-          book: {
-            connect: {
-              id: bookId,
-            },
-          },
+          // book: bookId ? {
+          //   connect: { id: bookId }
+          // } : undefined,
+          book: bookConnect,
           created_at: new Date(),
         },
       });

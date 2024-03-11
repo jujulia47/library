@@ -9,70 +9,68 @@ export async function PostWishlist(server: FastifyInstance) {
       bookTitle: z.string(),
       bookImage: z.string(),
       link: z.string(),
-      colection: z.array(z.string()),
+      collections: z.array(z.string()),
     });
 
-    const { bookTitle, bookImage, link, colection } = wishlistBody.parse(
+    const { bookTitle, bookImage, link, collections } = wishlistBody.parse(
       request.body
     );
 
-    let createdColection = [];
+    let createdCollection = [];
 
     // Para cada item na coleção, verifique se ele já existe no banco de dados
-    for (const colectionItem of colection) {
-      const existingColectionItem = await prisma.colectionArray.findFirst({
+    for (const collection of collections) {
+      const findCollection = await prisma.collectionArray.findFirst({
         where: {
-          colection: colectionItem,
+          collectionName: collection,
         },
       });
 
-      if (existingColectionItem) {
-        // Se o item da coleção já existir, adicione-o ao array de itens da coleção criados
-        createdColection.push(existingColectionItem);
+      if (findCollection) {
+        createdCollection.push(findCollection);
       } else {
-        // Se o item da coleção não existir, crie-o e adicione-o ao array de itens da coleção criados
-        const newColectionItem = await prisma.colectionArray.create({
+        const newCollectionItem = await prisma.collectionArray.create({
           data: {
-            colection: colectionItem,
+            collectionName: collection,
             created_at: new Date(),
           },
         });
-        createdColection.push(newColectionItem);
+        createdCollection.push(newCollectionItem);
       }
     }
 
-    const existingWishlist = await prisma.wishlist.findFirst({
+    const findWishlist = await prisma.wishlist.findFirst({
       where: {
         bookTitle: bookTitle,
       },
     });
 
-    if (existingWishlist) {
+    if (findWishlist) {
       return {
         error: "Livro já cadastrado na lista de wishlist",
       };
     } else {
-      const newFlag = await prisma.wishlist.create({
+      const newWishlist = await prisma.wishlist.create({
         data: {
           bookTitle: bookTitle,
           bookImage: bookImage,
           link: link,
-          colection: {
-            connect: createdColection.map((colectionItem) => ({
-              id: colectionItem.id,
+          collection: {
+            connect: createdCollection.map((collection) => ({
+              id: collection.id,
             })),
           },
           created_at: new Date(),
         },
         include: {
-          colection: {
+          collection: {
             select: {
-              colection: true
-            }
-          }
-        }
+              collectionName: true,
+            },
+          },
+        },
       });
-      return newFlag;
+      return newWishlist;
     }
   });
 }

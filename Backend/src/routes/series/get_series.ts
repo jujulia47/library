@@ -5,16 +5,16 @@ import { FastifyInstance } from "fastify";
 export async function GetSerie(server: FastifyInstance) {
   //------------------ GET------------------
   server.get("/serie", async () => {
-    const series = await prisma.serie.findMany({
+    const getSeries = await prisma.serie.findMany({
       include: {
-         books: {
-            select: {
-              title: true
-            }
-         }
+        books: {
+          select: {
+            title: true,
+          },
+        },
       },
     });
-    return series;
+    return getSeries;
   });
 
   //Ex: PDP
@@ -25,18 +25,18 @@ export async function GetSerie(server: FastifyInstance) {
 
     const { id } = idParam.parse(request.params);
 
-    const serie = prisma.serie.findFirst({
+    const getSeriesId = prisma.serie.findFirst({
       where: {
-        serieName: id
+        serieName: id,
       },
       include: {
         books: {
-           select: {
-             title: true
-           }
-        }
-     },
+          select: {
+            title: true,
+          },
+        },
+      },
     });
-    return serie;
+    return getSeriesId;
   });
 }

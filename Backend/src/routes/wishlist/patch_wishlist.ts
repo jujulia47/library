@@ -8,32 +8,30 @@ export async function PatchWishlist(server: FastifyInstance) {
       id: z.string().uuid(),
     });
     // objeto zod para o body
-    const putBody = z.object({
+    const patchBody = z.object({
       bookImage: z.string(),
       bookTitle: z.string(),
       link: z.string(),
-      colection: z.array(z.string()),
-
+      collection: z.array(z.string()),
     });
 
     const { id } = idParam.parse(request.params);
 
-    const {         
-      bookImage,
-      bookTitle,
-      link,
-      colection,
-      } = putBody.parse(request.body);
+    const { bookImage, bookTitle, link, collection } = patchBody.parse(
+      request.body
+    );
 
-      const existingColections = await prisma.colectionArray.findMany({
-        where: {
-          colection: { in: colection },
-        },
-      });
-  
-      const ColectionIds = existingColections.map((colection) => ({ id: colection.id }));
+    const findCollection = await prisma.collectionArray.findMany({
+      where: {
+        collectionName: { in: collection },
+      },
+    });
 
-    const wishlistUpdated = await prisma.wishlist.update({
+    const CollectionIds = findCollection.map((collection) => ({
+      id: collection.id,
+    }));
+
+    const updateWishlist = await prisma.wishlist.update({
       where: {
         id: id,
       },
@@ -41,18 +39,18 @@ export async function PatchWishlist(server: FastifyInstance) {
         bookImage,
         bookTitle,
         link,
-        colection: {
-          set: ColectionIds
-        }
+        collection: {
+          set: CollectionIds,
+        },
       },
       include: {
-        colection: {
+        collection: {
           select: {
-            colection: true,
+            collectionName: true,
           },
         },
       },
     });
-    return wishlistUpdated;
+    return updateWishlist;
   });
 }

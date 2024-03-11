@@ -5,7 +5,7 @@ import { FastifyInstance } from "fastify";
 export async function GetQuote(server: FastifyInstance) {
   //------------------ GET------------------
   server.get("/quote", async () => {
-    const quotes = await prisma.quotesArray.findMany({
+    const getQuotes = await prisma.quotesArray.findMany({
       include: {
         book: {
           select: {
@@ -14,7 +14,7 @@ export async function GetQuote(server: FastifyInstance) {
         },
       },
     });
-    return quotes;
+    return getQuotes;
   });
 
   //Ex: PDP
@@ -25,7 +25,7 @@ export async function GetQuote(server: FastifyInstance) {
 
     const { id } = idParam.parse(request.params);
 
-    const quote = prisma.quotesArray.findFirst({
+    const getQuotesId = prisma.quotesArray.findFirst({
       where: {
         quote: id,
       },
@@ -37,6 +37,6 @@ export async function GetQuote(server: FastifyInstance) {
         },
       },
     });
-    return quote;
+    return getQuotesId;
   });
 }

@@ -5,33 +5,33 @@ import { FastifyInstance } from "fastify";
 export async function GetBook(server: FastifyInstance) {
   //------------------ GET------------------
   server.get("/book", async () => {
-    const books = await prisma.book.findMany({
+    const getBooks = await prisma.book.findMany({
       include: {
         serie: {
           select: {
             serieName: true,
             concluded: true,
-            abandoned: true
-          }
+            abandoned: true,
+          },
         },
         flags: {
           select: {
-            flag: true
-          }
+            flag: true,
+          },
         },
         quotes: {
           select: {
-            quote: true
-          }
+            quote: true,
+          },
         },
-        colection: {
+        collection: {
           select: {
-            colection: true
-          }
-        }
+            collectionName: true,
+          },
+        },
       },
     });
-    return books;
+    return getBooks;
   });
 
   //Ex: PDP
@@ -42,7 +42,7 @@ export async function GetBook(server: FastifyInstance) {
 
     const { id } = idParam.parse(request.params);
 
-    const book = prisma.book.findFirst({
+    const getBooksId = prisma.book.findFirst({
       where: {
         title: id,
       },
@@ -51,27 +51,27 @@ export async function GetBook(server: FastifyInstance) {
           select: {
             serieName: true,
             concluded: true,
-            abandoned: true
-          }
+            abandoned: true,
+          },
         },
         flags: {
           select: {
-            flag: true
-          }
+            flag: true,
+          },
         },
         quotes: {
           select: {
-            quote: true
-          }
+            quote: true,
+          },
         },
-        colection: {
+        collection: {
           select: {
-            colection: true
-          }
-        }
+            collectionName: true,
+          },
+        },
       },
     });
-    return book;
+    return getBooksId;
   });
 
   //------------------ POST------------------

@@ -2,10 +2,10 @@ import { z } from "zod";
 import { prisma } from "../../lib/prisma";
 import { FastifyInstance } from "fastify";
 
-export async function GetColections(server: FastifyInstance) {
+export async function GetCollections(server: FastifyInstance) {
   //------------------ GET------------------
-  server.get("/colection", async () => {
-    const colections = await prisma.colectionArray.findMany({
+  server.get("/collection", async () => {
+    const getCollections = await prisma.collectionArray.findMany({
       include: {
         books: {
           select: {
@@ -19,20 +19,20 @@ export async function GetColections(server: FastifyInstance) {
         },
       },
     });
-    return colections;
+    return getCollections;
   });
 
   //Ex: PDP
-  server.get("/colection/:id", async (request) => {
+  server.get("/collection/:id", async (request) => {
     const idParam = z.object({
       id: z.string(),
     });
 
     const { id } = idParam.parse(request.params);
 
-    const colections = prisma.colectionArray.findFirst({
+    const getCollectionsId = prisma.collectionArray.findFirst({
       where: {
-        colection: id,
+        collectionName: id,
       },
       include: {
         books: {
@@ -47,6 +47,6 @@ export async function GetColections(server: FastifyInstance) {
         },
       },
     });
-    return colections;
+    return getCollectionsId;
   });
 }

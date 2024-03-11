@@ -5,16 +5,16 @@ import { FastifyInstance } from "fastify";
 export async function GetFlag(server: FastifyInstance) {
   //------------------ GET------------------
   server.get("/flag", async () => {
-    const flags = await prisma.flagsArray.findMany({
+    const getFlags = await prisma.flagsArray.findMany({
       include: {
         books: {
-           select: {
-             title: true
-           }
-        }
-     },
+          select: {
+            title: true,
+          },
+        },
+      },
     });
-    return flags;
+    return getFlags;
   });
 
   //Ex: PDP
@@ -25,18 +25,18 @@ export async function GetFlag(server: FastifyInstance) {
 
     const { id } = idParam.parse(request.params);
 
-    const flag = prisma.flagsArray.findFirst({
+    const getFlagsId = prisma.flagsArray.findFirst({
       where: {
         flag: id,
       },
       include: {
         books: {
-           select: {
-             title: true
-           }
-        }
-     },
+          select: {
+            title: true,
+          },
+        },
+      },
     });
-    return flag;
+    return getFlagsId;
   });
 }

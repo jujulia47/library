@@ -11,22 +11,22 @@ datasource db {
 }
 
 model Book {
-  id         String           @id @default(uuid())
-  image      String
-  title      String           @unique()
+  id         String            @id @default(uuid())
+  image      String?
+  title      String            @unique()
   serie      Serie?            @relation(fields: [seriesId], references: [id])
   seriesId   String?
   author     String
-  category   String
+  category   String?
   language   String
-  library    Boolean          @default(false)
-  initDate   String
-  finishDate String
-  finish     Boolean          @default(false)
-  rating     String
+  library    Boolean           @default(false)
+  initDate   String?
+  finishDate String?
+  finish     Boolean           @default(false)
+  rating     String?
   flags      FlagsArray[]
   quotes     QuotesArray[]
-  colection  ColectionArray[]
+  collection CollectionArray[]
   created_at DateTime
 
   @@map("books")
@@ -34,51 +34,51 @@ model Book {
 
 model Serie {
   id         String   @id @default(uuid())
-  serieName  String   @unique()
-  concluded  Boolean  @default(false)
-  abandoned  Boolean  @default(false)
+  serieName  String?  @unique()
+  concluded  Boolean? @default(false)
+  abandoned  Boolean? @default(false)
   books      Book[]
   created_at DateTime
 
   @@map("series")
 }
 
+model QuotesArray {
+  id         String   @id @default(uuid())
+  quote      String?  @unique()
+  quoteId    String?
+  book       Book?    @relation(fields: [quoteId], references: [id], onDelete: Cascade)
+  created_at DateTime
+
+  @@map("quotes")
+}
+
 model FlagsArray {
   id         String   @id @default(uuid())
-  flag       String   @unique()
+  flag       String?  @unique()
   books      Book[]
   created_at DateTime
 
   @@map("flags")
 }
 
-model QuotesArray {
-  id         String   @id @default(uuid())
-  quote      String   @unique()
-  quoteId    String
-  book       Book     @relation(fields: [quoteId], references: [id], onDelete: Cascade)
-  created_at DateTime
+model CollectionArray {
+  id             String     @id @default(uuid())
+  collectionName String?    @unique()
+  books          Book[]
+  wishlist       Wishlist[]
+  created_at     DateTime
 
-  @@map("quotes")
-}
-
-model ColectionArray {
-  id         String     @id @default(uuid())
-  colection  String     @unique()
-  books      Book[]
-  wishlist   Wishlist[]
-  created_at DateTime
-
-  @@map("colections")
+  @@map("collections")
 }
 
 model Wishlist {
-  id          String           @id @default(uuid())
-  bookTitle   String
-  bookImage   String
-  link        String
-  colection   ColectionArray[]
-  created_at  DateTime
+  id         String            @id @default(uuid())
+  bookTitle  String
+  bookImage  String?
+  link       String
+  collection CollectionArray[]
+  created_at DateTime
 
   @@map("wishlist")
 }
