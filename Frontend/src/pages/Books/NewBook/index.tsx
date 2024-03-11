@@ -1,32 +1,40 @@
 import React, { useContext, useEffect } from "react";
 import { GlobalContext } from "../context/index";
-import { FLagGlobalContext } from "../../../pages/Flags/context/index";
+// import { FLagGlobalContext } from "../../../pages/Flags/context/index";
 
 function NewBook() {
-  const { postBooks } = useContext(GlobalContext);
-  const { flags } = useContext(FLagGlobalContext);
+  const { postBooks, series, flags, collections } = useContext(GlobalContext);
 
   const submitForm = (events: any) => {
     events.preventDefault();
     const {
+      image,
       title,
+      serieName,
       author,
       category,
       language,
       library,
-      finish,
+      initDate,
       finishDate,
-      image,
+      finish,
       rating,
       flags,
       flagsCustom,
       quotes,
+      collections,
+      collectionCustom,
     } = events.target;
 
-    const teste = [] as String[];
+    const flagsArray = [] as String[];
+    const collectionsArray = [] as String[];
 
     [...flags].map((flag: any) => {
-      flag.checked && teste.push(flag.value);
+      flag.checked && flagsArray.push(flag.value);
+    });
+
+    [...collections].map((collection: any) => {
+      collection.checked && collectionsArray.push(collection.value);
     });
 
     // if (flags && Array.isArray(flags)) {
@@ -39,26 +47,38 @@ function NewBook() {
     //   teste.push(flags.value);
     // }
 
-    flagsCustom.value && teste.push(flagsCustom.value);
+    flagsCustom.value && flagsArray.push(flagsCustom.value);
+    collectionCustom.value && collectionsArray.push(collectionCustom.value);
 
     postBooks(
+      image.value,
       title.value,
+      serieName.value,
       author.value,
       category.value,
       language.value,
       library.value === "true",
-      finish.value === "true",
+      initDate.value,
       finishDate.value,
-      image.value,
+      finish.value === "true",
       rating.value,
-      teste,
-      quotes.value
+      flagsArray,
+      quotes.value,
+      collectionsArray
     );
   };
 
   return (
     <>
       <form action="" method="post" onSubmit={(e) => submitForm(e)}>
+        {/* IMAGEM */}
+        <div>
+          <label htmlFor="">Imagem</label>
+          <input type="text" name="image" id="image" placeholder="Imagem" />
+        </div>
+        <br />
+
+        {/* TÍTULO */}
         <div>
           <label htmlFor="">Título</label>
           <input
@@ -68,12 +88,46 @@ function NewBook() {
             placeholder="Titulo do Livro"
           />
         </div>
-        <br/>
+        <br />
+
+        {/* SÉRIE */}
+        <div>
+          {/* {series.map((serie, index) => {
+            return (
+              <label
+                htmlFor={`serieName${index}`}
+                className="serieName"
+                id={`serieName${index}`}
+              >
+                <input
+                  type="checkbox"
+                  name="serieName"
+                  value={serie.serieName}
+                />
+                {serie.serieName}
+              </label>
+            );
+          })} */}
+
+          <select name="serieName" id="serieName">
+            <option value="">Livro único</option>
+            {series.map((serie) => {
+              return (
+                <option value={serie.serieName}>{serie.serieName}</option>
+              )
+            })}
+          </select>
+        </div>
+        <br />
+
+        {/* AUTOR */}
         <div>
           <label htmlFor="">Autor</label>
           <input type="text" name="author" id="author" placeholder="Autor" />
         </div>
-        <br/>
+        <br />
+
+        {/* CATEGORIA */}
         <div>
           <label htmlFor="">Categoria</label>
           <input
@@ -83,45 +137,88 @@ function NewBook() {
             placeholder="Categoria"
           />
         </div>
-        <br/>
+        <br />
+
+        {/* IDIOMA */}
         <div>
           <label htmlFor="">Idioma</label>
           <select name="language" id="language">
-          <option value="Português" id="pt-bt">Português</option>
-          <option value="English" id="pt-bt">English</option>
+            <option value="Português" id="pt-bt">
+              Português
+            </option>
+            <option value="English" id="pt-bt">
+              English
+            </option>
           </select>
         </div>
-        <br/>
+
+        <br />
+
+        {/* BICLIOTECA */}
         <div>
-          <label htmlFor="library" id="library">Biblioteca</label>
-          <br/>
-          <input type="radio" id="true" name="library" value="true" defaultChecked/>
+          <label htmlFor="library" id="library">
+            Biblioteca
+          </label>
+          <br />
+          <input
+            type="radio"
+            id="true"
+            name="library"
+            value="true"
+            defaultChecked
+          />
           <label htmlFor="">Sim</label>
-          <br/>
-          <input type="radio" id="false" name="library" value="false"/>
+          <br />
+          <input type="radio" id="false" name="library" value="false" />
           <label htmlFor="">Não</label>
         </div>
-        <br/>
+        <br />
+
+        {/* DATA INÍCIO LEITURA */}
         <div>
-          <label htmlFor="finish" id="finish">Lido</label>
-          <br/>
-          <input type="radio" id="true" name="finish" value="true" defaultChecked/>
+          <label htmlFor="">Data início Leitrua</label>
+          <input
+            type="text"
+            name="initDate"
+            id="initDate"
+            placeholder="initDate"
+          />
+        </div>
+        <br />
+
+        {/* DATA FIM LEITURA */}
+        <div>
+          <label htmlFor="">Data fim Leitrua</label>
+          <input
+            type="text"
+            name="finishDate"
+            id="finishDate"
+            placeholder="finishDate"
+          />
+        </div>
+        <br />
+
+        {/* LIDO? */}
+        <div>
+          <label htmlFor="finish" id="finish">
+            Lido
+          </label>
+          <br />
+          <input
+            type="radio"
+            id="true"
+            name="finish"
+            value="true"
+            defaultChecked
+          />
           <label htmlFor="">Sim</label>
-          <br/>
-          <input type="radio" id="false" name="finish" value="false"/>
+          <br />
+          <input type="radio" id="false" name="finish" value="false" />
           <label htmlFor="">Não</label>
         </div>
-        <br/>
-        <div>
-          <label htmlFor="">Data da Leitrua</label>
-          <input type="text" name="finishDate" id="finishDate" placeholder="finishDate" />
-        </div>
-        <br/>
-        <div>
-          <label htmlFor="">Imagem</label>
-          <input type="text" name="image" id="image" placeholder="Imagem" />
-        </div>
-        <br/>
+        <br />
+
+        {/* AVALIAÇÃO */}
         <div>
           <label htmlFor="">Avaliação</label>
           <input
@@ -131,7 +228,9 @@ function NewBook() {
             placeholder="Avaliação"
           />
         </div>
-        <br/>
+        <br />
+
+        {/* FLAGS */}
         <div>
           {flags.map((flag, index) => {
             return (
@@ -140,11 +239,7 @@ function NewBook() {
                 className="flag"
                 id={`flag${index}`}
               >
-                <input
-                  type="checkbox"
-                  name="flags"
-                  value={flag.flag}
-                />
+                <input type="checkbox" name="flags" value={flag.flag} />
                 {flag.flag}
               </label>
             );
@@ -155,12 +250,40 @@ function NewBook() {
           </label>
           <input type="text" name="flagsCustom" />
         </div>
-        <br/>
+        <br />
+
+        {/* CITAÇÕES */}
         <div>
           <label htmlFor="">Book Quotes</label>
           <input type="text" name="quotes" id="quotes" placeholder="quotes" />
         </div>
-        <br/>
+        <br />
+
+        {/* COLEÇÕES */}
+        <div>
+          {collections.map((collection, index) => {
+            return (
+              <label
+                htmlFor={`collections${index}`}
+                className="collections"
+                id={`collections${index}`}
+              >
+                <input
+                  type="checkbox"
+                  name="collections"
+                  value={collection.collectionName}
+                />
+                {collection.collectionName}
+              </label>
+            );
+          })}
+          <label htmlFor="" className="collection" id="">
+            {" "}
+            Nova coleção{" "}
+          </label>
+          <input type="text" name="collectionCustom" />
+        </div>
+
         <button>Enviar</button>
       </form>
     </>
