@@ -1,84 +1,9 @@
-import React, { createContext, useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
+import { GlobalContext } from "../context/index";
+import type { Book, Collection, Flag, Quote, Serie } from "../typings/index";
 
-//Criar em um arquivo separado
-interface Flag {
-  // id: string;
-  flag: string;
-  // created_at: string;
-}
-interface Collection {
-  // id: String;
-  collectionName: string;
-  // created_at: String;
-}
-interface Quote {
-  id: String;
-  quote: String;
-  quoteId: String;
-  created_at: String;
-}
-interface Book {
-  image: String;
-  title: String;
-  serieName: String;
-  author: String;
-  category: String;
-  language: String;
-  library: Boolean;
-  initDate: String;
-  finishDate: String;
-  finish: Boolean;
-  rating: String;
-  flags: Flag[];
-  quotes: Quote[];
-  collections: Collection[];
-}
-interface Serie {
-  serieName: string;
-  concluded: Boolean;
-  abandoned: Boolean;
-}
-
-export const GlobalContext = createContext(
-  {} as {
-    books: Book[];
-    series: Serie[];
-    collections: Collection[];
-    flags: Flag[];
-    postBooks: any;
-  }
-);
-
-export const GlobalStorage = ({ children }: any) => {
-  const [books, setBooks] = useState([
-    {
-      image: "",
-      title: "",
-      serieName: "",
-      author: "",
-      category: "",
-      language: "",
-      library: false,
-      initDate: "",
-      finishDate: "",
-      finish: false,
-      rating: "",
-      flags: [],
-      quotes: [],
-      collections: [],
-    },
-  ]);
-
-  const [series, setSeries] = useState([
-    {
-      serieName: "",
-      concluded: false,
-      abandoned: false,
-    },
-  ]);
-
-  const [collections, setCollections] = useState([{ collectionName: "" }]);
-  const [flags, setFlags] = useState([{flag: ""},]);
+const useRequest = () => {
+  const { setBooks, setSeries, setFlags, setCollections} = useContext(GlobalContext);
 
   //GET BOOK
   async function getBooks() {
@@ -86,7 +11,6 @@ export const GlobalStorage = ({ children }: any) => {
     const handleBooks = await fetchBooks.json();
     setBooks(handleBooks);
   }
-
   //GET SERIE
   async function getSeries() {
     const fetchSeries = await fetch(`http://localhost:3333/serie`);
@@ -149,7 +73,7 @@ export const GlobalStorage = ({ children }: any) => {
         rating: rating,
         flags: flags,
         quotes: [quotes],
-        collections: collections, //Se passar entre conchetes aparece esse erro 
+        collections: collections, //Se passar entre conchetes aparece esse erro
         // "[
         //   {
         //     "code": "invalid_type",
@@ -165,25 +89,12 @@ export const GlobalStorage = ({ children }: any) => {
         //Então, passar o valor em um array, espera-se uma string apenas, e não um array
       }),
     })
-      .then(response => response.json())
-      .then(response => console.log(response))
+      .then((response) => response.json())
+      .then((response) => console.log(response))
       .catch((err) => console.error(err));
   }
 
-  return (
-    <GlobalContext.Provider
-      value={{
-        books,
-        series,
-        flags,
-        collections,
-        // setBooks,
-        postBooks,
-        // getBooks,
-        // getSeries
-      }}
-    >
-      {children}
-    </GlobalContext.Provider>
-  );
+  return { postBooks };
 };
+
+export default useRequest;

@@ -1,14 +1,11 @@
 import React from 'react';
-// import useContextGet from './hooks/useContextGet'
-import { GlobalStorage } from './pages/Books/context/index';
+import { GlobalStorage } from './context/index';
 
-import Home from './pages/Home/index'
+// import Home from './pages/Home/index'
 import NewBook from './pages/Books/NewBook/index'
 import './styles/css/index.css';
 
-function App() {
-  // const { books } = useContextGet();
-  
+function App() {  
   return (
     <GlobalStorage>
         {/* <Home/> */}

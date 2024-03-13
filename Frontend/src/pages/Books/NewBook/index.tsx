@@ -1,12 +1,16 @@
-import React, { useContext, useEffect } from "react";
-import { GlobalContext } from "../context/index";
-// import { FLagGlobalContext } from "../../../pages/Flags/context/index";
+import React, { useContext, useRef } from "react";
+import { GlobalContext } from "../../../context/index";
+import useRequest from "../../../hooks/index";
 
 function NewBook() {
-  const { postBooks, series, flags, collections } = useContext(GlobalContext);
+  const formRef = useRef(null);
+  const { series, flags, collections } =
+    useContext(GlobalContext);
+  const { postBooks } = useRequest();
 
   const submitForm = (events: any) => {
     events.preventDefault();
+
     const {
       image,
       title,
@@ -26,26 +30,24 @@ function NewBook() {
       collectionCustom,
     } = events.target;
 
-    const flagsArray = [] as String[];
-    const collectionsArray = [] as String[];
+    const flagsArray = [];
+    const collectionsArray = [];
 
-    [...flags].map((flag: any) => {
-      flag.checked && flagsArray.push(flag.value);
-    });
+    if (flags && Array.isArray(flags)) {
+      flags.forEach((flag) => {
+        if (flag.checked) {
+          flagsArray.push(flag.value);
+        }
+      });
+    }
 
-    [...collections].map((collection: any) => {
-      collection.checked && collectionsArray.push(collection.value);
-    });
-
-    // if (flags && Array.isArray(flags)) {
-    //   for (const flag of flags) {
-    //     if (flag.checked) {
-    //       teste.push(flag.value);
-    //     }
-    //   }
-    // } else {
-    //   teste.push(flags.value);
-    // }
+    if (collections && Array.isArray(collections)) {
+      collections.forEach((collection) => {
+        if (collection.checked) {
+          collectionsArray.push(collection.value);
+        }
+      });
+    }
 
     flagsCustom.value && flagsArray.push(flagsCustom.value);
     collectionCustom.value && collectionsArray.push(collectionCustom.value);
@@ -66,11 +68,32 @@ function NewBook() {
       quotes.value,
       collectionsArray
     );
+
+    // Limpar os campos do formulário individualmente
+    image.value = "";
+    title.value = "";
+    serieName.value = "";
+    author.value = "";
+    category.value = "";
+    language.value = "";
+    library.checked = false;
+    initDate.value = "";
+    finishDate.value = "";
+    finish.checked = false;
+    rating.value = "";
+    flagsCustom.value = "";
+    quotes.value = "";
+    collectionCustom.value = "";
   };
 
   return (
     <>
-      <form action="" method="post" onSubmit={(e) => submitForm(e)}>
+      <form
+        ref={formRef}
+        action=""
+        method="post"
+        onSubmit={(e) => submitForm(e)}
+      >
         {/* IMAGEM */}
         <div>
           <label htmlFor="">Imagem</label>
@@ -92,29 +115,10 @@ function NewBook() {
 
         {/* SÉRIE */}
         <div>
-          {/* {series.map((serie, index) => {
-            return (
-              <label
-                htmlFor={`serieName${index}`}
-                className="serieName"
-                id={`serieName${index}`}
-              >
-                <input
-                  type="checkbox"
-                  name="serieName"
-                  value={serie.serieName}
-                />
-                {serie.serieName}
-              </label>
-            );
-          })} */}
-
           <select name="serieName" id="serieName">
             <option value="">Livro único</option>
             {series.map((serie) => {
-              return (
-                <option value={serie.serieName}>{serie.serieName}</option>
-              )
+              return <option value={serie.serieName}>{serie.serieName}</option>;
             })}
           </select>
         </div>
