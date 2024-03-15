@@ -37,7 +37,7 @@ const useRequest = () => {
     getCollections();
   }, []);
 
-  //POST
+  //POST BOOKS
   async function postBooks(
     image: String,
     title: String,
@@ -94,7 +94,43 @@ const useRequest = () => {
       .catch((err) => console.error(err));
   }
 
-  return { postBooks };
+  //POST FLAGS
+  async function postFlags(
+    flag: String,
+  ) {
+    await fetch(`http://localhost:3333/flag`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        flag: flag,
+      }),
+    })
+      .then((response) => response.json())
+      .then((response) => console.log(response))
+      .catch((err) => console.error(err));
+  }
+
+    //POST COLLECTIONS
+    async function postCollection(
+      collection: String,
+    ) {
+      await fetch(`http://localhost:3333/collection`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          collection: collection,
+        }),
+      })
+        .then((response) => response.json())
+        .then((response) => console.log(response))
+        .catch((err) => console.error(err));
+    }
+
+  return { postBooks, postFlags, postCollection };
 };
 
 export default useRequest;
