@@ -16,7 +16,7 @@ export interface Quote {
 }
 export interface Book {
   image: String;
-  title: String;
+  title: string;
   serieName: String;
   author: String;
   category: String;

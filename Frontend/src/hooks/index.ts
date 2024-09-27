@@ -3,7 +3,8 @@ import { GlobalContext } from "../context/index";
 import type { Book, Collection, Flag, Quote, Serie } from "../typings/index";
 
 const useRequest = () => {
-  const { setBooks, setSeries, setFlags, setCollections} = useContext(GlobalContext);
+  const { setBooks, setSeries, setFlags, setCollections } =
+    useContext(GlobalContext);
 
   //GET BOOK
   async function getBooks() {
@@ -73,20 +74,7 @@ const useRequest = () => {
         rating: rating,
         flags: flags,
         quotes: [quotes],
-        collections: collections, //Se passar entre conchetes aparece esse erro
-        // "[
-        //   {
-        //     "code": "invalid_type",
-        //     "expected": "string",
-        //     "received": "array",
-        //     "path": [
-        //       "collections",
-        //       0
-        //     ],
-        //     "message": "Expected string, received array"
-        //   }
-        // ]"
-        //Então, passar o valor em um array, espera-se uma string apenas, e não um array
+        collections: collections,
       }),
     })
       .then((response) => response.json())
@@ -95,9 +83,7 @@ const useRequest = () => {
   }
 
   //POST FLAGS
-  async function postFlags(
-    flag: String,
-  ) {
+  async function postFlags(flag: String) {
     await fetch(`http://localhost:3333/flag`, {
       method: "POST",
       headers: {
@@ -112,25 +98,86 @@ const useRequest = () => {
       .catch((err) => console.error(err));
   }
 
-    //POST COLLECTIONS
-    async function postCollection(
-      collection: String,
-    ) {
-      await fetch(`http://localhost:3333/collection`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          collection: collection,
-        }),
-      })
-        .then((response) => response.json())
-        .then((response) => console.log(response))
-        .catch((err) => console.error(err));
-    }
+  //POST COLLECTIONS
+  async function postCollection(collection: String) {
+    await fetch(`http://localhost:3333/collection`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        collection: collection,
+      }),
+    })
+      .then((response) => response.json())
+      .then((response) => console.log(response))
+      .catch((err) => console.error(err));
+  }
 
-  return { postBooks, postFlags, postCollection };
+  //POST QUOTES
+  async function postQuote(quote: String, bookName: String) {
+    await fetch(`http://localhost:3333/quote`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        quote: quote,
+        bookName: bookName
+      }),
+    })
+      .then((response) => response.json())
+      .then((response) => console.log(response))
+      .catch((err) => console.error(err));
+  }
+
+  //POST SERIES
+  async function postSerie(
+    serieName: String,
+    concluded: Boolean,
+    abandoned: Boolean
+    ) {
+    await fetch(`http://localhost:3333/serie`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        serieName: serieName,
+        concluded: concluded,
+        abandoned: abandoned
+      }),
+    })
+      .then((response) => response.json())
+      .then((response) => console.log(response))
+      .catch((err) => console.error(err));
+  }
+
+  //POST WISHLIST
+  async function postWishlist(
+    bookTitle: String,
+    bookImage: String,
+    link: String,
+    collections: Collection[]    
+    ) {
+    await fetch(`http://localhost:3333/wishlist`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        bookTitle: bookTitle,
+        bookImage: bookImage,
+        link: link,
+        collections: collections    
+      }),
+    })
+      .then((response) => response.json())
+      .then((response) => console.log(response))
+      .catch((err) => console.error(err));
+  }
+
+  return { postBooks, postFlags, postCollection, postQuote, postSerie, postWishlist };
 };
 
 export default useRequest;

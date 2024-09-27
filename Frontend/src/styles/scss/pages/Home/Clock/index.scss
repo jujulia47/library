@@ -3,23 +3,45 @@
     display: flex;
     gap: 10px;
     font-size: 75px;
-    padding: 20px;
+    font-family: "Inconsolata", monospace;
+    padding: 30px 36px 5px;
 }
 
 .clockTime{
-    background-color: #260A03;
-    height: 120px;
+    // background-color: #260A03;
+    // background: linear-gradient(to right, #422E25 5%, #371C11 35%, #240D05 60%);
+    height: 175px;
     color: #fff;
-    padding: 10px;
+    padding: 20px;
     display: flex;
     align-items: center;
+    border-radius: 10px;
+    box-shadow: 3px 1px 4px #00000063;
+    width: 100px;
+    padding-left: 35px;
 }
 
-.line{
-    border: 1px solid #fff;
-    position: absolute;
-    width: 106px;
-    left: 20px;
+.hour{
+    background: linear-gradient(to right, #422E25, #371C11, #240D05);
+}
+
+.min{
+    background: linear-gradient(to right, #371C11, #240D05);
+}
+
+.amPm{
+    position: relative;
+    font-size: 20px;
+    opacity: 0.6;
     top: 50%;
-    box-shadow: inset 1px 1px 2px #BABECC, inset -1px -1px 2px #fff;
+}
+
+.day{
+    position: absolute;
+    // font-family: "Ballet", cursive;
+    font-family: "Italianno", cursive;
+    font-family: "Tangerine", cursive;
+    color: #fff;
+    font-size: 26px;
+    padding-left: 35px;
 }
