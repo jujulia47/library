@@ -2,7 +2,7 @@ import React from 'react';
 import { GlobalStorage } from './context/index';
 
 import Home from './pages/Home/index';
-import NewBook from './pages/Books/NewBook/index';
+import NewBook from './pages/Forms/NewBook/index';
 import NewFlag from './pages/Flags/NewFlag/index';
 import NewCollection from './pages/Collection/NewCollection/index';
 import NewQuote from './pages/Quotes/NewQuote/index';
@@ -14,10 +14,10 @@ import './styles/css/index.css';
 function App() {
   return (
     <GlobalStorage>
-      <Home />
+      {/* <Home /> */}
       <p>FORMULÁRIO NOVO LIVRO</p>
       <NewBook />
-      <br />
+      {/* <br />
       <p>FORMULÁRIO NOVA FLAG</p>
       <NewFlag />
       <br />
@@ -28,7 +28,7 @@ function App() {
       <p>FORMULÁRIO NOVA SÉRIE</p>
       <NewSerie />
       <p>FORMULÁRIO NOVA WISHLIST</p>
-      <NewWishlist />
+      <NewWishlist /> */}
     </GlobalStorage>
   );
 }

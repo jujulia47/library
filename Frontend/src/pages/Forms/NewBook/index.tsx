@@ -1,11 +1,10 @@
-import React, { useContext, useRef } from "react";
-import { GlobalContext } from "../../../context/index";
-import useRequest from "../../../hooks/index";
+import React, { useContext, useRef } from 'react';
+import { GlobalContext } from '../../../context/index';
+import useRequest from '../../../hooks/index';
 
 function NewBook() {
   const formRef = useRef(null);
-  const { series, flags, collections } =
-    useContext(GlobalContext);
+  const { series, flags, collections } = useContext(GlobalContext);
   const { postBooks } = useRequest();
 
   const submitForm = (events: any) => {
@@ -59,45 +58,40 @@ function NewBook() {
       author.value,
       category.value,
       language.value,
-      library.value === "true",
+      library.value === 'true',
       initDate.value,
       finishDate.value,
-      finish.value === "true",
+      finish.value === 'true',
       rating.value,
       flagsArray,
       quotes.value,
-      collectionsArray
+      collectionsArray,
     );
 
     // Limpar os campos do formulário individualmente
-    image.value = "";
-    title.value = "";
-    serieName.value = "";
-    author.value = "";
-    category.value = "";
-    language.value = "";
+    image.value = '';
+    title.value = '';
+    serieName.value = '';
+    author.value = '';
+    category.value = '';
+    language.value = '';
     library.checked = false;
-    initDate.value = "";
-    finishDate.value = "";
+    initDate.value = '';
+    finishDate.value = '';
     finish.checked = false;
-    rating.value = "";
-    flagsCustom.value = "";
-    quotes.value = "";
-    collectionCustom.value = "";
+    rating.value = '';
+    flagsCustom.value = '';
+    quotes.value = '';
+    collectionCustom.value = '';
   };
 
   return (
     <>
-      <form
-        ref={formRef}
-        action=""
-        method="post"
-        onSubmit={(e) => submitForm(e)}
-      >
+      <form ref={formRef} action="" method="post" onSubmit={(e) => submitForm(e)} >
         {/* IMAGEM */}
         <div>
           <label htmlFor="">Imagem</label>
-          <input type="text" name="image" id="image" placeholder="Imagem" />
+          <input type="file" name="image" id="image" placeholder="Imagem" />
         </div>
         <br />
 
@@ -182,7 +176,7 @@ function NewBook() {
         <div>
           <label htmlFor="">Data início Leitrua</label>
           <input
-            type="text"
+            type="date"
             name="initDate"
             id="initDate"
             placeholder="initDate"
@@ -194,7 +188,7 @@ function NewBook() {
         <div>
           <label htmlFor="">Data fim Leitrua</label>
           <input
-            type="text"
+            type="date"
             name="finishDate"
             id="finishDate"
             placeholder="finishDate"
@@ -249,8 +243,8 @@ function NewBook() {
             );
           })}
           <label htmlFor="" className="flag" id="">
-            {" "}
-            Nova flag{" "}
+            {' '}
+            Nova flag{' '}
           </label>
           <input type="text" name="flagsCustom" />
         </div>
@@ -282,8 +276,8 @@ function NewBook() {
             );
           })}
           <label htmlFor="" className="collection" id="">
-            {" "}
-            Nova coleção{" "}
+            {' '}
+            Nova coleção{' '}
           </label>
           <input type="text" name="collectionCustom" />
         </div>
