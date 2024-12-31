@@ -2,7 +2,7 @@ import { z } from "zod";
 import { prisma } from "../../lib/prisma";
 import { FastifyInstance } from "fastify";
 
-export async function GetStatus(server: FastifyInstance) {
+export async function GetVersion(server: FastifyInstance) {
   //------------------ GET------------------
   server.get("/version", async () => {
     const getVersion = await prisma.version.findMany({
