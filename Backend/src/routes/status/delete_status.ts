@@ -2,26 +2,17 @@ import { z } from "zod";
 import { prisma } from "../../lib/prisma";
 import { FastifyInstance } from "fastify";
 
-export async function PatchFlag(server: FastifyInstance) {
-  server.patch("/flag/id/:id", async (request) => {
+export async function DeleteStatus(server: FastifyInstance) {
+  //------------DELETE-------------
+  server.delete("/status/id/:id", async (request) => {
     const idParam = z.object({
       id: z.string().uuid(),
     });
-    // objeto zod para o body
-    const patchFlag = z.object({
-      flag: z.string(),
-    });
-
     const { id } = idParam.parse(request.params);
 
-    const { flag } = patchFlag.parse(request.body);
-
-    const updateFlag = await prisma.flagsArray.update({
+    const deleteStatus = await prisma.status.delete({
       where: {
-        id: id,
-      },
-      data: {
-        flag,
+        id,
       },
       include: {
         books: {
@@ -36,6 +27,6 @@ export async function PatchFlag(server: FastifyInstance) {
         },
       },
     });
-    return updateFlag;
+    return deleteStatus;
   });
 }

@@ -2,26 +2,26 @@ import { z } from "zod";
 import { prisma } from "../../lib/prisma";
 import { FastifyInstance } from "fastify";
 
-export async function PatchFlag(server: FastifyInstance) {
-  server.patch("/flag/id/:id", async (request) => {
+export async function PatchStatus(server: FastifyInstance) {
+  server.patch("/status/id/:id", async (request) => {
     const idParam = z.object({
       id: z.string().uuid(),
     });
     // objeto zod para o body
-    const patchFlag = z.object({
-      flag: z.string(),
+    const patchStatus = z.object({
+      bookStatus: z.string(),
     });
 
     const { id } = idParam.parse(request.params);
 
-    const { flag } = patchFlag.parse(request.body);
+    const { bookStatus } = patchStatus.parse(request.body);
 
-    const updateFlag = await prisma.flagsArray.update({
+    const updateStatus = await prisma.status.update({
       where: {
         id: id,
       },
       data: {
-        flag,
+        bookStatus,
       },
       include: {
         books: {
@@ -36,6 +36,6 @@ export async function PatchFlag(server: FastifyInstance) {
         },
       },
     });
-    return updateFlag;
+    return updateStatus;
   });
 }

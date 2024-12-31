@@ -10,12 +10,13 @@ export async function PatchQuote(server: FastifyInstance) {
     // objeto zod para o body
     const putBody = z.object({
       quote: z.string(),
+      page: z.number(),
       bookName: z.string().nullable(),
     });
 
     const { id } = idParam.parse(request.params);
 
-    const { quote, bookName } = putBody.parse(request.body);
+    const { quote, page, bookName } = putBody.parse(request.body);
 
     let bookConnect = null;
 
@@ -41,6 +42,7 @@ export async function PatchQuote(server: FastifyInstance) {
       },
       data: {
         quote,
+        page,
         book: bookConnect,
       },
       include: {

@@ -20,6 +20,21 @@ export async function DeleteSerie(server: FastifyInstance) {
             title: true,
           },
         },
+        status: {
+          select: {
+            bookStatus: true
+          }
+        },
+        wishlist: {
+          select: {
+            bookTitle: true
+          }
+        },
+        flags: {
+          select: {
+            flag: true
+          }
+        },
       },
     });
     return deleteSerie;

@@ -2,26 +2,26 @@ import { z } from "zod";
 import { prisma } from "../../lib/prisma";
 import { FastifyInstance } from "fastify";
 
-export async function PatchFlag(server: FastifyInstance) {
-  server.patch("/flag/id/:id", async (request) => {
+export async function PatchVersion(server: FastifyInstance) {
+  server.patch("/version/id/:id", async (request) => {
     const idParam = z.object({
       id: z.string().uuid(),
     });
     // objeto zod para o body
-    const patchFlag = z.object({
-      flag: z.string(),
+    const patchVersion = z.object({
+      bookVersion: z.string(),
     });
 
     const { id } = idParam.parse(request.params);
 
-    const { flag } = patchFlag.parse(request.body);
+    const { bookVersion } = patchVersion.parse(request.body);
 
-    const updateFlag = await prisma.flagsArray.update({
+    const updateVersion = await prisma.version.update({
       where: {
         id: id,
       },
       data: {
-        flag,
+        bookVersion,
       },
       include: {
         books: {
@@ -29,13 +29,8 @@ export async function PatchFlag(server: FastifyInstance) {
             title: true,
           },
         },
-        serie: {
-          select: {
-            serieName: true,
-          },
-        },
       },
     });
-    return updateFlag;
+    return updateVersion;
   });
 }

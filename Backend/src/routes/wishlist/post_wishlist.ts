@@ -10,15 +10,15 @@ export async function PostWishlist(server: FastifyInstance) {
       bookImage: z.string(),
       link: z.string(),
       collections: z.array(z.string()),
+      serieName: z.string().nullable(),
     });
 
-    const { bookTitle, bookImage, link, collections } = wishlistBody.parse(
+    const { bookTitle, bookImage, link, collections, serieName } = wishlistBody.parse(
       request.body
     );
 
     let createdCollection = [];
 
-    // Para cada item na coleção, verifique se ele já existe no banco de dados
     for (const collection of collections) {
       const findCollection = await prisma.collectionArray.findFirst({
         where: {
@@ -38,6 +38,17 @@ export async function PostWishlist(server: FastifyInstance) {
         createdCollection.push(newCollectionItem);
       }
     }
+
+    let serieConnect = {};
+    if (serieName) {
+      const foundSerie = await prisma.serie.findFirst({
+        where: { serieName: serieName },
+      });
+      if (!foundSerie) {
+        return { error: "A série não foi encontrada." };
+      }
+      serieConnect = { connect: { id: foundSerie.id } };
+    } 
 
     const findWishlist = await prisma.wishlist.findFirst({
       where: {
@@ -60,6 +71,7 @@ export async function PostWishlist(server: FastifyInstance) {
               id: collection.id,
             })),
           },
+          serie: serieConnect,
           created_at: new Date(),
         },
         include: {

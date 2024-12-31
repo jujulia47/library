@@ -20,6 +20,16 @@ export async function DeleteBook(server: FastifyInstance) {
             serieName: true,
           },
         },
+        status: {
+          select: {
+            bookStatus: true
+          }
+        },
+        version: {
+          select: {
+            bookVersion: true
+          }
+        },
         quotes: {
           select: {
             quote: true,

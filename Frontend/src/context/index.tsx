@@ -1,5 +1,5 @@
-import React, { createContext, useState } from "react";
-import type { Book, Collection, Flag, Serie } from "../typings/index";
+import React, { createContext, useContext, useState } from 'react';
+import type { Book, Collection, Flag, Serie } from '../typings/index';
 
 export const GlobalContext = createContext(
   {} as {
@@ -11,7 +11,7 @@ export const GlobalContext = createContext(
     setCollections: any;
     flags: Flag[];
     setFlags: any;
-  }
+  },
 );
 
 export const GlobalStorage = ({ children }: any) => {
@@ -24,21 +24,21 @@ export const GlobalStorage = ({ children }: any) => {
   //   flags: [],
   // });
 
-  const [clear, setClear] = useState("")
+  const [clear, setClear] = useState('');
 
   const [books, setBooks] = useState([
     {
-      image: "",
-      title: "",
-      serieName: "",
-      author: "",
-      category: "",
-      language: "",
+      image: '',
+      title: '',
+      serieName: '',
+      author: '',
+      category: '',
+      language: '',
       library: false,
-      initDate: "",
-      finishDate: "",
+      initDate: '',
+      finishDate: '',
       finish: false,
-      rating: "",
+      rating: '',
       flags: [],
       quotes: [],
       collections: [],
@@ -47,14 +47,14 @@ export const GlobalStorage = ({ children }: any) => {
 
   const [series, setSeries] = useState([
     {
-      serieName: "",
+      serieName: '',
       concluded: false,
       abandoned: false,
     },
   ]);
 
-  const [collections, setCollections] = useState([{ collectionName: "" }]);
-  const [flags, setFlags] = useState([{ flag: "" }]);
+  const [collections, setCollections] = useState([{ collectionName: '' }]);
+  const [flags, setFlags] = useState([{ flag: '' }]);
 
   return (
     <GlobalContext.Provider
@@ -72,4 +72,9 @@ export const GlobalStorage = ({ children }: any) => {
       {children}
     </GlobalContext.Provider>
   );
+};
+
+export const useBooks = () => {
+  const booksContext = useContext(GlobalContext);
+  return booksContext;
 };

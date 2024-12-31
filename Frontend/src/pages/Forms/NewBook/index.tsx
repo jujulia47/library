@@ -1,11 +1,11 @@
 import React, { useContext, useRef } from 'react';
-import { GlobalContext } from '../../../context/index';
-import useRequest from '../../../hooks/index';
+import { useBooks } from '../../../context/index';
+// import useRequest from '../../../hooks/index';
 
 function NewBook() {
   const formRef = useRef(null);
-  const { series, flags, collections } = useContext(GlobalContext);
-  const { postBooks } = useRequest();
+  const { series, flags, collections } = useBooks();
+  // const { postBooks } = useRequest();//chamar a action de books direto do import
 
   const submitForm = (events: any) => {
     events.preventDefault();
@@ -87,7 +87,12 @@ function NewBook() {
 
   return (
     <>
-      <form ref={formRef} action="" method="post" onSubmit={(e) => submitForm(e)} >
+      <form
+        ref={formRef}
+        action=""
+        method="post"
+        onSubmit={(e) => submitForm(e)}
+      >
         {/* IMAGEM */}
         <div>
           <label htmlFor="">Imagem</label>

@@ -20,6 +20,11 @@ export async function DeleteWishlist(server: FastifyInstance) {
             collectionName: true,
           },
         },
+        serie: {
+          select: {
+            serieName: true
+          }
+        }
       },
     });
     return deleteWishlist;

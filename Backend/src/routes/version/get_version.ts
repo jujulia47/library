@@ -2,37 +2,32 @@ import { z } from "zod";
 import { prisma } from "../../lib/prisma";
 import { FastifyInstance } from "fastify";
 
-export async function GetFlag(server: FastifyInstance) {
+export async function GetStatus(server: FastifyInstance) {
   //------------------ GET------------------
-  server.get("/flag", async () => {
-    const getFlags = await prisma.flagsArray.findMany({
+  server.get("/version", async () => {
+    const getVersion = await prisma.version.findMany({
       include: {
         books: {
           select: {
             title: true,
           },
         },
-        serie: {
-          select: {
-            serieName: true,
-          },
-        },
       },
     });
-    return getFlags;
+    return getVersion;
   });
 
   //Ex: PDP
-  server.get("/flag/:id", async (request) => {
+  server.get("/version/:id", async (request) => {
     const idParam = z.object({
       id: z.string(),
     });
 
     const { id } = idParam.parse(request.params);
 
-    const getFlagsId = prisma.flagsArray.findFirst({
+    const getVersionId = prisma.version.findFirst({
       where: {
-        flag: id,
+        bookVersion: id,
       },
       include: {
         books: {
@@ -40,13 +35,8 @@ export async function GetFlag(server: FastifyInstance) {
             title: true,
           },
         },
-        serie: {
-          select: {
-            serieName: true,
-          },
-        },
       },
     });
-    return getFlagsId;
+    return getVersionId;
   });
 }

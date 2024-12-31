@@ -8,10 +8,11 @@ export async function PostQuote(server: FastifyInstance) {
   server.post("/quote", async (request) => {
     const quoteBody = z.object({
       quote: z.string(),
+      page: z.number(),
       bookName: z.string().nullable(),
     });
 
-    const { quote, bookName } = quoteBody.parse(request.body);
+    const { quote, page, bookName } = quoteBody.parse(request.body);
 
     let bookConnect = {};
 
@@ -45,9 +46,7 @@ export async function PostQuote(server: FastifyInstance) {
       const newQuote = await prisma.quotesArray.create({
         data: {
           quote: quote,
-          // book: bookId ? {
-          //   connect: { id: bookId }
-          // } : undefined,
+          page,
           book: bookConnect,
           created_at: new Date(),
         },

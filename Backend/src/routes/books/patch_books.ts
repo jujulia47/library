@@ -16,12 +16,15 @@ export async function PatchBook(server: FastifyInstance) {
       category: z.string(),
       language: z.string(),
       library: z.boolean(),
-      initDate: z.string(),
-      finishDate: z.string(),
-      finish: z.boolean(),
+      initDate: z.date(),
+      finishDate: z.date(),
+      bookStatus: z.string().nullable(),
       rating: z.string(),
+      comments: z.string(),
+      pages: z.number(),
+      bookVersion: z.string().nullable(),
       flags: z.array(z.string()),
-      collections: z.array(z.string()),
+      collection: z.array(z.string()),
     });
 
     const { id } = idParam.parse(request.params);
@@ -36,10 +39,13 @@ export async function PatchBook(server: FastifyInstance) {
       library,
       initDate,
       finishDate,
-      finish,
+      bookStatus,
+      comments,
+      pages,
+      bookVersion,
       rating,
       flags,
-      collections,
+      collection,
     } = patchBody.parse(request.body);
 
     const findFlags = await prisma.flagsArray.findMany({
@@ -54,36 +60,55 @@ export async function PatchBook(server: FastifyInstance) {
 
     const findCollections = await prisma.collectionArray.findMany({
       where: {
-        collectionName: { in: collections },
+        collectionName: { in: collection },
       },
     });
     let CollectionIds = findCollections.map((collection) => ({
       id: collection.id,
     }));
     if (
-      collections.length === 0 ||
-      (collections.length === 0 && collections[0] === "")
+      collection.length === 0 ||
+      (collection.length === 0 && collection[0] === "")
     ) {
       CollectionIds = [];
     }
 
-    let serieConnect = null;
+    let serieConnect = {};
+    let statusConnect = {};
+    let versionConnect = {};
 
-    if (serieName) {
+    if (serieName || statusConnect || bookVersion) {
       const findSerie = await prisma.serie.findFirst({
         where: {
           serieName: serieName,
         },
       });
 
-      if (!findSerie) {
+      const findBookStatus = await prisma.status.findFirst({
+        where: {
+          bookStatus: bookStatus,
+        },
+      });
+
+      const findBookVersion = await prisma.version.findFirst({
+        where: {
+          bookVersion: bookVersion,
+        },
+      });
+
+      if (!findSerie || !findBookStatus || !findBookVersion) {
         return {
-          error: "A série não foi encontrada.",
+          error: "A série, a situação ou a versão do livro não foi encontrada.",
         };
       }
       serieConnect = { connect: { id: findSerie.id } };
+      statusConnect = { connect: { id: findBookStatus.id } };
+      versionConnect = { connect: { id: findBookVersion.id } };
+      
     } else {
       serieConnect = { disconnect: true };
+      statusConnect = { disconnect: true}
+      versionConnect = { disconnect: true}
     }
 
     const UpdateBook = await prisma.book.update({
@@ -100,7 +125,10 @@ export async function PatchBook(server: FastifyInstance) {
         library,
         initDate,
         finishDate,
-        finish,
+        status: statusConnect,
+        comments,
+        pages,
+        version: versionConnect,
         rating,
         flags: {
           set: flagIds,
@@ -125,6 +153,16 @@ export async function PatchBook(server: FastifyInstance) {
             collectionName: true,
           },
         },
+        status: {
+          select: {
+            bookStatus: true,
+          }
+        },
+        version: {
+          select: {
+            bookVersion: true
+          }
+        }
       },
     });
     return UpdateBook;

@@ -2,51 +2,51 @@ import { z } from "zod";
 import { prisma } from "../../lib/prisma";
 import { FastifyInstance } from "fastify";
 
-export async function GetWishlist(server: FastifyInstance) {
+export async function GetStatus(server: FastifyInstance) {
   //------------------ GET------------------
-  server.get("/wishlist", async () => {
-    const getWishlist = await prisma.wishlist.findMany({
+  server.get("/status", async () => {
+    const getStatus = await prisma.status.findMany({
       include: {
-        collection: {
+        books: {
           select: {
-            collectionName: true,
+            title: true,
           },
         },
         serie: {
           select: {
-            serieName: true
-          }
-        }
+            serieName: true,
+          },
+        },
       },
     });
-    return getWishlist;
+    return getStatus;
   });
 
   //Ex: PDP
-  server.get("/wishlist/:id", async (request) => {
+  server.get("/status/:id", async (request) => {
     const idParam = z.object({
       id: z.string(),
     });
 
     const { id } = idParam.parse(request.params);
 
-    const getWishlistId = prisma.wishlist.findFirst({
+    const getStatusId = prisma.status.findFirst({
       where: {
-        bookTitle: id,
+        bookStatus: id,
       },
       include: {
-        collection: {
+        books: {
           select: {
-            collectionName: true,
+            title: true,
           },
         },
         serie: {
           select: {
-            serieName: true
-          }
-        }
+            serieName: true,
+          },
+        },
       },
     });
-    return getWishlistId;
+    return getStatusId;
   });
 }

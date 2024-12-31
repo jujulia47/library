@@ -12,6 +12,21 @@ export async function GetSerie(server: FastifyInstance) {
             title: true,
           },
         },
+        flags: {
+          select: {
+            flag: true,
+          },
+        },
+        wishlist: {
+          select: {
+            bookTitle: true,
+          },
+        },
+        status: {
+          select: {
+            bookStatus: true,
+          },
+        },
       },
     });
     return getSeries;
@@ -33,6 +48,21 @@ export async function GetSerie(server: FastifyInstance) {
         books: {
           select: {
             title: true,
+          },
+        },
+        flags: {
+          select: {
+            flag: true,
+          },
+        },
+        wishlist: {
+          select: {
+            bookTitle: true,
+          },
+        },
+        status: {
+          select: {
+            bookStatus: true,
           },
         },
       },

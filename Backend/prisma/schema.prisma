@@ -16,14 +16,19 @@ model Book {
   title      String            @unique()
   serie      Serie?            @relation(fields: [seriesId], references: [id])
   seriesId   String?
-  author     String
+  author     String?
   category   String?
-  language   String
-  library    Boolean           @default(false)
-  initDate   String?
-  finishDate String?
-  finish     Boolean           @default(false)
+  language   String?
+  library    Boolean?          @default(false)
+  initDate   DateTime?
+  finishDate DateTime?
+  status     Status?           @relation(fields: [statusId], references: [id])
+  statusId   String?
   rating     String?
+  comments   String?
+  pages      Int?
+  version    Version?          @relation(fields: [versionId], references: [id])
+  versionId  String?
   flags      FlagsArray[]
   quotes     QuotesArray[]
   collection CollectionArray[]
@@ -33,20 +38,47 @@ model Book {
 }
 
 model Serie {
-  id         String   @id @default(uuid())
-  serieName  String?  @unique()
-  concluded  Boolean? @default(false)
-  abandoned  Boolean? @default(false)
+  id         String       @id @default(uuid())
+  serieName  String?      @unique()
+  author     String?
+  rating     String?
+  status     Status?      @relation(fields: [statusId], references: [id])
+  statusId   String?
+  initDate   DateTime?
+  finishDate DateTime?
+  comments   String?
   books      Book[]
+  wishlist   Wishlist[]
+  flags      FlagsArray[]
   created_at DateTime
 
   @@map("series")
+}
+
+model Version {
+  id          String   @id @default(uuid())
+  bookVersion String?  @unique()
+  books       Book[]
+  created_at  DateTime
+
+  @@map("version")
+}
+
+model Status {
+  id         String   @id @default(uuid())
+  bookStatus String?  @unique()
+  books      Book[]
+  serie      Serie[]
+  created_at DateTime
+
+  @@map("status")
 }
 
 model QuotesArray {
   id         String   @id @default(uuid())
   quote      String?  @unique()
   quoteId    String?
+  page       Int?
   book       Book?    @relation(fields: [quoteId], references: [id], onDelete: Cascade)
   created_at DateTime
 
@@ -57,6 +89,7 @@ model FlagsArray {
   id         String   @id @default(uuid())
   flag       String?  @unique()
   books      Book[]
+  serie      Serie[]
   created_at DateTime
 
   @@map("flags")
@@ -65,6 +98,9 @@ model FlagsArray {
 model CollectionArray {
   id             String     @id @default(uuid())
   collectionName String?    @unique()
+  initDate       DateTime?
+  finishDate     DateTime?
+  comments       String?
   books          Book[]
   wishlist       Wishlist[]
   created_at     DateTime
@@ -76,7 +112,9 @@ model Wishlist {
   id         String            @id @default(uuid())
   bookTitle  String            @unique()
   bookImage  String?
-  link       String
+  link       String?
+  serie      Serie?            @relation(fields: [seriesId], references: [id])
+  seriesId   String?
   collection CollectionArray[]
   created_at DateTime
 

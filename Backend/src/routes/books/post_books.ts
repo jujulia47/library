@@ -14,10 +14,13 @@ export async function PostBook(server: FastifyInstance) {
       category: z.string(),
       language: z.string(),
       library: z.boolean(),
-      initDate: z.string(),
-      finishDate: z.string(),
-      finish: z.boolean(),
+      initDate: z.string().nullable(),
+      finishDate: z.string().nullable(),
+      bookStatus: z.string().nullable(),
       rating: z.string(),
+      comments: z.string().nullable(),
+      pages: z.number(),
+      bookVersion: z.string().nullable(),
       flags: z.array(z.string()),
       quotes: z.array(z.string()).default([]),
       collections: z.array(z.string()),
@@ -33,8 +36,11 @@ export async function PostBook(server: FastifyInstance) {
       library,
       initDate,
       finishDate,
-      finish,
+      bookStatus,
       rating,
+      comments,
+      pages,
+      bookVersion,
       flags,
       quotes,
       collections,
@@ -42,8 +48,11 @@ export async function PostBook(server: FastifyInstance) {
 
     let createdFlags = [];
     let createdCollection = [];
-    let serieConnect = {};
 
+    let serieConnect = {};
+    let statusConnect  = {};
+    let versionConnect  = {};
+ 
     for (const flag of flags) {
       if (flag.trim() != "") {
         const findFlag = await prisma.flagsArray.findFirst({
@@ -87,21 +96,55 @@ export async function PostBook(server: FastifyInstance) {
       }
     }
 
-    if (serieName) {
-      const findSerie = await prisma.serie.findFirst({
-        where: {
-          serieName: serieName,
-        },
-      });
+    if (statusConnect || bookVersion || serieName) {
 
-      if (!findSerie) {
-        return {
-          error: "A série não foi encontrada.",
-        };
+      const findStatus = bookStatus
+        ? await prisma.status.findFirst({
+            where: { bookStatus: bookStatus },
+          })
+        : null;
+    
+      const findVersion = bookVersion
+        ? await prisma.version.findFirst({
+            where: { bookVersion: bookVersion },
+          })
+        : null;
+    
+      const findSerie = serieName
+        ? await prisma.serie.findFirst({
+            where: { serieName: serieName },
+          })
+        : null;
+    
+      if (!findStatus || !findVersion) {
+        return { error: "A situação ou versão do livro não foi encontrada." };
       }
-      // Use o ID do livro encontrado para conectar a citação ao livro
-      serieConnect = { connect: { id: findSerie.id } };
+    
+      let serieConnect;
+      if (!findSerie && serieName) {
+        const newSerie = await prisma.serie.create({
+          data: {
+            serieName,
+            author,
+            status: { connect: { id: findStatus.id } },
+            created_at: new Date(),
+          },
+        });
+        serieConnect = { connect: { id: newSerie.id } };
+      } else if (findSerie) {
+        serieConnect = { connect: { id: findSerie.id } };
+      }
+    
+      serieConnect = { connect: { id: findStatus.id } };
+      versionConnect = { connect: { id: findVersion.id } };
+    
+      return {
+        statusConnect,
+        versionConnect,
+        serieConnect,
+      };
     }
+    
 
     const newBook = await prisma.book.create({
       data: {
@@ -114,8 +157,11 @@ export async function PostBook(server: FastifyInstance) {
         library: library,
         initDate: initDate,
         finishDate: finishDate,
-        finish: finish,
+        status: statusConnect,
         rating: rating,
+        comments,
+        pages,
+        version: versionConnect,
         flags: {
           connect: createdFlags.map((flag) => ({
             id: flag.id,
@@ -124,8 +170,9 @@ export async function PostBook(server: FastifyInstance) {
         quotes: {
           create: quotes
             .filter((quote) => quote.trim() !== "")
-            .map((quote) => ({
-              quote: quote,
+            .map((quote, page) => ({
+              quote,
+              page,
               created_at: new Date(),
             })),
         },
@@ -140,8 +187,6 @@ export async function PostBook(server: FastifyInstance) {
         serie: {
           select: {
             serieName: true,
-            concluded: true,
-            abandoned: true,
           },
         },
         flags: {
@@ -159,9 +204,10 @@ export async function PostBook(server: FastifyInstance) {
             collectionName: true,
           },
         },
+        version: true,
+        status: true
       },
     });
-
     return newBook;
   });
 }

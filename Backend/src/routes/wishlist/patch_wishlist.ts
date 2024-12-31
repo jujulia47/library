@@ -13,11 +13,12 @@ export async function PatchWishlist(server: FastifyInstance) {
       bookTitle: z.string(),
       link: z.string(),
       collection: z.array(z.string()),
+      serieName: z.string().nullable(),
     });
 
     const { id } = idParam.parse(request.params);
 
-    const { bookImage, bookTitle, link, collection } = patchBody.parse(
+    const { bookImage, bookTitle, link, collection, serieName } = patchBody.parse(
       request.body
     );
 
@@ -31,6 +32,23 @@ export async function PatchWishlist(server: FastifyInstance) {
       id: collection.id,
     }));
 
+    let serieConnect = {};
+    if (serieName) {
+      const findSerie = await prisma.serie.findFirst({
+        where: {
+          serieName: serieName,
+        },
+      });
+      if (!findSerie) {
+        return {
+          error: "A série, a situação ou a versão do livro não foi encontrada.",
+        };
+      }
+      serieConnect = { connect: { id: findSerie.id } };
+    } else {
+      serieConnect = { disconnect: true };
+    }
+
     const updateWishlist = await prisma.wishlist.update({
       where: {
         id: id,
@@ -42,11 +60,17 @@ export async function PatchWishlist(server: FastifyInstance) {
         collection: {
           set: CollectionIds,
         },
+        serie: serieConnect,
       },
       include: {
         collection: {
           select: {
             collectionName: true,
+          },
+        },
+        serie: {
+          select: {
+            serieName: true,
           },
         },
       },
