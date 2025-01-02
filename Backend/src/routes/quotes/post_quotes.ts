@@ -9,26 +9,23 @@ export async function PostQuote(server: FastifyInstance) {
     const quoteBody = z.object({
       quote: z.string(),
       page: z.number(),
-      bookName: z.string().nullable(),
+      title: z.string().optional(),
     });
 
-    const { quote, page, bookName } = quoteBody.parse(request.body);
+    const { quote, page, title } = quoteBody.parse(request.body);
 
     let bookConnect = {};
-
-    if (bookName) {
+    if (title) {
       const findBook = await prisma.book.findFirst({
         where: {
-          title: bookName,
+          title: title,
         },
       });
-
       if (!findBook) {
         return {
           error: "O livro não foi encontrado.",
         };
       }
-
       bookConnect = { connect: { id: findBook.id } };
     }
 
@@ -50,6 +47,13 @@ export async function PostQuote(server: FastifyInstance) {
           book: bookConnect,
           created_at: new Date(),
         },
+        include: {
+          book: {
+            select: {
+              title: true,
+            },
+          },
+        }
       });
       return newQuote;
     }

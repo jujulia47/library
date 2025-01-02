@@ -9,11 +9,11 @@ export async function PatchWishlist(server: FastifyInstance) {
     });
     // objeto zod para o body
     const patchBody = z.object({
-      bookImage: z.string(),
       bookTitle: z.string(),
-      link: z.string(),
-      collection: z.array(z.string()),
-      serieName: z.string().nullable(),
+      bookImage: z.string().optional(),
+      link: z.string().optional().nullable(),
+      collection: z.array(z.string()).optional().default([]),
+      serieName: z.string().optional(),
     });
 
     const { id } = idParam.parse(request.params);
@@ -21,17 +21,19 @@ export async function PatchWishlist(server: FastifyInstance) {
     const { bookImage, bookTitle, link, collection, serieName } = patchBody.parse(
       request.body
     );
-
+    
     const findCollection = await prisma.collectionArray.findMany({
       where: {
         collectionName: { in: collection },
       },
     });
-
-    const CollectionIds = findCollection.map((collection) => ({
+    let CollectionIds = findCollection.map((collection) => ({
       id: collection.id,
     }));
-
+    if (collection.length === 0 || (collection.length === 0 && collection[0] === "")) {
+      CollectionIds = [];
+    }
+    
     let serieConnect = {};
     if (serieName) {
       const findSerie = await prisma.serie.findFirst({

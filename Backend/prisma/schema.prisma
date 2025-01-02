@@ -20,8 +20,8 @@ model Book {
   category   String?
   language   String?
   library    Boolean?          @default(false)
-  initDate   DateTime?
-  finishDate DateTime?
+  initDate   String?
+  finishDate String?
   status     Status?           @relation(fields: [statusId], references: [id])
   statusId   String?
   rating     String?
@@ -44,8 +44,8 @@ model Serie {
   rating     String?
   status     Status?      @relation(fields: [statusId], references: [id])
   statusId   String?
-  initDate   DateTime?
-  finishDate DateTime?
+  initDate   String?
+  finishDate String?
   comments   String?
   books      Book[]
   wishlist   Wishlist[]
@@ -98,8 +98,8 @@ model FlagsArray {
 model CollectionArray {
   id             String     @id @default(uuid())
   collectionName String?    @unique()
-  initDate       DateTime?
-  finishDate     DateTime?
+  initDate       String?
+  finishDate     String?
   comments       String?
   books          Book[]
   wishlist       Wishlist[]

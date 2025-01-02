@@ -3,59 +3,80 @@ import { prisma } from "../../lib/prisma";
 import { FastifyInstance } from "fastify";
 
 export async function PatchSerie(server: FastifyInstance) {
-  server.patch("/serie/id/:id", async (request) => {
+  server.patch("/serie/id/:id", async (request, reply) => {
     const idParam = z.object({
       id: z.string().uuid(),
     });
     const patchSerie = z.object({
       serieName: z.string(),
-      author: z.string(),
-      initDate: z.date(),
-      finishDate: z.date(),
-      bookStatus: z.string().nullable(),
-      rating: z.string(),
-      comments: z.string(),
-      flags: z.array(z.string()),
-      books: z.array(z.string()),
-      wishlist: z.array(z.string()),
+      author: z.string().optional(),
+      initDate: z.string().optional(),
+      finishDate: z.string().optional(),
+      bookStatus: z.string(),
+      rating: z.string().optional(),
+      comments: z.string().optional(),
+      flags: z.array(z.string()).optional().default([]),
+      books: z.array(z.string()).optional().default([]),
+      wishlist: z.array(z.string()).optional().default([]),
     });
 
     const { id } = idParam.parse(request.params);
 
     const { serieName, author, initDate, finishDate, bookStatus, rating, comments, flags, books, wishlist } = patchSerie.parse(request.body);
+    // Filtra valores vazios
+    const filteredBooks = books.filter((book) => book.trim() !== "");
+    const filteredWishlist = wishlist.filter((item) => item.trim() !== "");
+    const filteredFlags = flags.filter((flag) => flag.trim() !== "");
 
+    // Valida Flags
     const findFlags = await prisma.flagsArray.findMany({
       where: {
-        flag: { in: flags },
+        flag: { in: filteredFlags },
       },
     });
-    let flagIds = findFlags.map((flag) => ({ id: flag.id }));
-    if (flags.length === 0 || (flags.length === 0 && flags[0] === "")) {
-      flagIds = [];
+    if (filteredFlags.length > findFlags.length) {
+      const notFoundFlags = filteredFlags.filter(
+        (flag) => !findFlags.some((found) => found.flag === flag)
+      );
+      return reply.status(400).send({
+        error: `As seguintes flags não foram encontradas: ${notFoundFlags.join(", ")}`,
+      });
     }
+    const flagIds = findFlags.map((flag) => ({ id: flag.id }));
 
-    const findBook = await prisma.book.findMany({
+    // Valida Books
+    const findBooks = await prisma.book.findMany({
       where: {
-        title: { in: books },
+        title: { in: filteredBooks },
       },
     });
-    let booksIds = findBook.map((book) => ({ id: book.id }));
-    if (books.length === 0 || (books.length === 0 && books[0] === "")) {
-      booksIds = [];
+    if (filteredBooks.length > findBooks.length) {
+      const notFoundBooks = filteredBooks.filter(
+        (book) => !findBooks.some((found) => found.title === book)
+      );
+      return reply.status(400).send({
+        error: `Os seguintes livros não foram encontrados: ${notFoundBooks.join(", ")}`,
+      });
     }
+    const booksIds = findBooks.map((book) => ({ id: book.id }));
 
+    // Valida Wishlist
     const findWishlist = await prisma.wishlist.findMany({
       where: {
-        bookTitle: { in: wishlist },
+        bookTitle: { in: filteredWishlist },
       },
     });
-    let wishlistIds = findWishlist.map((wishTable) => ({ id: wishTable.id }));
-    if (wishlist.length === 0 || (wishlist.length === 0 && wishlist[0] === "")) {
-      wishlistIds = [];
+    if (filteredWishlist.length > findWishlist.length) {
+      const notFoundWishlist = filteredWishlist.filter(
+        (item) => !findWishlist.some((found) => found.bookTitle === item)
+      );
+      return reply.status(400).send({
+        error: `Os seguintes itens da wishlist não foram encontrados: ${notFoundWishlist.join(", ")}`,
+      });
     }
+    const wishlistIds = findWishlist.map((wish) => ({ id: wish.id }));
 
     let statusConnect = {};
-
     if (bookStatus ) {
       const findBookStatus = await prisma.status.findFirst({
         where: {

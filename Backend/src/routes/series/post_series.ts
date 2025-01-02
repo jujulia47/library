@@ -5,22 +5,24 @@ import { FastifyInstance } from "fastify";
 export async function PostSerie(server: FastifyInstance) {
   //------------------ POST------------------
 
-  server.post("/serie", async (request) => {
+  server.post("/serie", async (request, reply) => {
     const serieBody = z.object({
       serieName: z.string(),
-      author: z.string(),
-      initDate: z.date(),
-      finishDate: z.date(),
-      bookStatus: z.string().nullable(),
-      rating: z.string(),
-      comments: z.string(),
-      flags: z.array(z.string()),
-      books: z.array(z.string()),
-      wishlist: z.array(z.string()),
+      author: z.string().optional(),
+      initDate: z.string().optional(),
+      finishDate: z.string().optional(),
+      bookStatus: z.string(),
+      rating: z.string().optional(),
+      comments: z.string().optional(),
+      flags: z.array(z.string()).optional().default([]),
+      books: z.array(z.string()).optional().default([]),
+      wishlist: z.array(z.string()).optional().default([]),
     });
 
     const { serieName, author, initDate, finishDate, bookStatus, rating, comments, flags, books, wishlist } = serieBody.parse(request.body);
-
+    // Filtrar strings vazias
+    const filteredBooks = books.filter((book) => book.trim() !== "");
+    const filteredWishlist = wishlist.filter((item) => item.trim() !== "");
     const findSerie = await prisma.serie.findFirst({
       where: {
         serieName: serieName,
@@ -51,32 +53,29 @@ export async function PostSerie(server: FastifyInstance) {
 
     const findBooks = await prisma.book.findMany({
       where: {
-        title: { in: books },
+        title: { in: filteredBooks },
       },
     });
     const booksIds = findBooks.map((book) => ({ id: book.id }));
-
-    if (books.length > 0 && booksIds.length !== books.length) {
-      return {
+    if (filteredBooks.length > 0 && booksIds.length !== filteredBooks.length) {
+      return reply.status(400).send({
         error: "Alguns livros não foram encontrados.",
-      };
+      });
     }
 
-    // Buscar os IDs da wishlist na tabela `wishlist`
     const findWishlist = await prisma.wishlist.findMany({
       where: {
-        bookTitle: { in: wishlist },
+        bookTitle: { in: filteredWishlist  },
       },
     });
     const wishlistIds = findWishlist.map((item) => ({ id: item.id }));
-
-    if (wishlist.length > 0 && wishlistIds.length !== wishlist.length) {
-      return {
+    if (filteredWishlist.length > 0 && wishlistIds.length !== filteredWishlist.length) {
+      return reply.status(400).send({
         error: "Alguns itens da wishlist não foram encontrados.",
-      };
+      });
     }
-    let statusConnect = {};
 
+    let statusConnect = {};
     if (bookStatus) {
       // Buscar a situação no banco de dados
       const foundStatus = await prisma.status.findFirst({
@@ -117,6 +116,23 @@ export async function PostSerie(server: FastifyInstance) {
           },
           status: statusConnect,
           created_at: new Date(),
+        },
+        include: {
+          status: {
+            select: {
+              bookStatus: true
+            }
+          },
+          books: {
+            select: {
+              title: true,
+            },
+          },
+          wishlist: {
+            select: {
+              bookTitle: true,
+            },
+          },
         },
       });
       return newSerie;

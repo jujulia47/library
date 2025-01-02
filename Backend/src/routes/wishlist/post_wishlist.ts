@@ -7,10 +7,10 @@ export async function PostWishlist(server: FastifyInstance) {
   server.post("/wishlist", async (request) => {
     const wishlistBody = z.object({
       bookTitle: z.string(),
-      bookImage: z.string(),
-      link: z.string(),
-      collections: z.array(z.string()),
-      serieName: z.string().nullable(),
+      bookImage: z.string().optional(),
+      link: z.string().optional(),
+      collections: z.array(z.string()).optional(),
+      serieName: z.string().optional(),
     });
 
     const { bookTitle, bookImage, link, collections, serieName } = wishlistBody.parse(
@@ -19,23 +19,25 @@ export async function PostWishlist(server: FastifyInstance) {
 
     let createdCollection = [];
 
-    for (const collection of collections) {
-      const findCollection = await prisma.collectionArray.findFirst({
-        where: {
-          collectionName: collection,
-        },
-      });
-
-      if (findCollection) {
-        createdCollection.push(findCollection);
-      } else {
-        const newCollectionItem = await prisma.collectionArray.create({
-          data: {
+    if(collections){
+      for (const collection of collections) {
+        const findCollection = await prisma.collectionArray.findFirst({
+          where: {
             collectionName: collection,
-            created_at: new Date(),
           },
         });
-        createdCollection.push(newCollectionItem);
+  
+        if (findCollection) {
+          createdCollection.push(findCollection);
+        } else {
+          const newCollectionItem = await prisma.collectionArray.create({
+            data: {
+              collectionName: collection,
+              created_at: new Date(),
+            },
+          });
+          createdCollection.push(newCollectionItem);
+        }
       }
     }
 
@@ -64,8 +66,8 @@ export async function PostWishlist(server: FastifyInstance) {
       const newWishlist = await prisma.wishlist.create({
         data: {
           bookTitle: bookTitle,
-          bookImage: bookImage,
-          link: link,
+          bookImage: bookImage === undefined ? null : bookImage,  // Definindo como null se não for passado
+          link: link === undefined ? null : link,
           collection: {
             connect: createdCollection.map((collection) => ({
               id: collection.id,
@@ -80,6 +82,11 @@ export async function PostWishlist(server: FastifyInstance) {
               collectionName: true,
             },
           },
+          serie: {
+            select: {
+              serieName: true
+            }
+          }
         },
       });
       return newWishlist;

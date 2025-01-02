@@ -10,13 +10,15 @@ export async function PatchCollection(server: FastifyInstance) {
     const PatchCollection = z.object({
       collectionName: z.string(),
       comments: z.string(),
-      books: z.array(z.string()),
-      wishlist: z.array(z.string()),
+      initDate: z.string().nullable(),
+      finishDate: z.string().nullable(),
+      books: z.array(z.string()).optional().default([]),
+      wishlist: z.array(z.string()).optional().default([]),
     });
 
     const { id } = idParam.parse(request.params);
 
-    const { collectionName, comments, books, wishlist } = PatchCollection.parse(request.body);
+    const { collectionName, comments, initDate, finishDate, books, wishlist } = PatchCollection.parse(request.body);
 
     const findBooks = await prisma.book.findMany({
       where: {
@@ -45,6 +47,8 @@ export async function PatchCollection(server: FastifyInstance) {
       data: {
         collectionName,
         comments,
+        initDate,
+        finishDate,
         books: {
           set: booksIds
         },

@@ -11,19 +11,19 @@ export async function PatchQuote(server: FastifyInstance) {
     const putBody = z.object({
       quote: z.string(),
       page: z.number(),
-      bookName: z.string().nullable(),
+      title: z.string().optional(),
     });
 
     const { id } = idParam.parse(request.params);
 
-    const { quote, page, bookName } = putBody.parse(request.body);
+    const { quote, page, title } = putBody.parse(request.body);
 
     let bookConnect = null;
 
-    if (bookName) {
+    if (title) {
       const findBook = await prisma.book.findFirst({
         where: {
-          title: bookName,
+          title: title,
         },
       });
       if (!findBook) {

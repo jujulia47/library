@@ -7,23 +7,23 @@ export async function PostBook(server: FastifyInstance) {
 
   server.post("/book", async (request) => {
     const postBook = z.object({
-      image: z.string(),
+      image: z.string().optional().nullable(),
       title: z.string(),
-      serieName: z.string().nullable(),
-      author: z.string(),
-      category: z.string(),
-      language: z.string(),
-      library: z.boolean(),
-      initDate: z.string().nullable(),
-      finishDate: z.string().nullable(),
-      bookStatus: z.string().nullable(),
-      rating: z.string(),
-      comments: z.string().nullable(),
-      pages: z.number(),
-      bookVersion: z.string().nullable(),
-      flags: z.array(z.string()),
-      quotes: z.array(z.string()).default([]),
-      collections: z.array(z.string()),
+      serieName: z.string().optional().nullable(),
+      author: z.string().optional().nullable(),
+      category: z.string().optional().nullable(),
+      language: z.string().optional().nullable(),
+      library: z.boolean().optional(),
+      initDate: z.string().optional().nullable(),
+      finishDate: z.string().optional().nullable(),
+      bookStatus: z.string(),
+      rating: z.string().optional().nullable(),
+      comments: z.string().optional().nullable(),
+      pages: z.number().optional().default(0),
+      bookVersion: z.string(),
+      flags: z.array(z.string()).optional().default([]),
+      quotes: z.array(z.string()).optional(),
+      collections: z.array(z.string()).optional(),
     });
 
     const {
@@ -46,13 +46,9 @@ export async function PostBook(server: FastifyInstance) {
       collections,
     } = postBook.parse(request.body);
 
-    let createdFlags = [];
-    let createdCollection = [];
-
     let serieConnect = {};
-    let statusConnect  = {};
-    let versionConnect  = {};
  
+    let createdFlags = [];
     for (const flag of flags) {
       if (flag.trim() != "") {
         const findFlag = await prisma.flagsArray.findFirst({
@@ -74,91 +70,103 @@ export async function PostBook(server: FastifyInstance) {
       }
     }
 
-    for (const collection of collections) {
-      if (collection.trim() !== "") {
+    let createdCollection = [];
+    if(collections){
+      for (const collection of collections) {
         const findCollection = await prisma.collectionArray.findFirst({
           where: {
             collectionName: collection,
           },
         });
-
+  
         if (findCollection) {
           createdCollection.push(findCollection);
         } else {
-          const newCollection = await prisma.collectionArray.create({
+          const newCollectionItem = await prisma.collectionArray.create({
             data: {
               collectionName: collection,
               created_at: new Date(),
             },
           });
-          createdCollection.push(newCollection);
+          createdCollection.push(newCollectionItem);
         }
       }
     }
 
-    if (statusConnect || bookVersion || serieName) {
-
-      const findStatus = bookStatus
-        ? await prisma.status.findFirst({
-            where: { bookStatus: bookStatus },
-          })
-        : null;
-    
-      const findVersion = bookVersion
-        ? await prisma.version.findFirst({
-            where: { bookVersion: bookVersion },
-          })
-        : null;
-    
-      const findSerie = serieName
-        ? await prisma.serie.findFirst({
-            where: { serieName: serieName },
-          })
-        : null;
-    
-      if (!findStatus || !findVersion) {
-        return { error: "A situação ou versão do livro não foi encontrada." };
+    let createdQuotes = [];
+    if(quotes){
+      for (const quote of quotes) {
+        const findQuote = await prisma.quotesArray.findFirst({
+          where: {
+            quote: quote,
+          },
+        });
+  
+        if (findQuote) {
+          createdQuotes.push(findQuote);
+        } else {
+          const newQuote = await prisma.quotesArray.create({
+            data: {
+              quote: quote,
+              created_at: new Date(),
+            },
+          });
+          createdQuotes.push(newQuote);
+        }
       }
-    
-      let serieConnect;
-      if (!findSerie && serieName) {
+    }
+
+    let statusConnect = {};
+    if (bookStatus) {
+      const foundStatus = await prisma.status.findFirst({
+        where: { bookStatus: bookStatus },
+      });
+      if (!foundStatus) {
+        return { error: "A situação do livro não foi encontrada." };
+      }
+      statusConnect = { connect: { id: foundStatus.id } };
+    } 
+
+    let versionConnect = {};
+    if (bookVersion) {
+      const foundVersion = await prisma.version.findFirst({
+        where: { bookVersion: bookVersion },
+      });
+      if (!foundVersion) {
+        return { error: "A situação do livro não foi encontrada." };
+      }
+      versionConnect = { connect: { id: foundVersion.id } };
+    } 
+
+    if (serieName) {    
+      const findSerie = await prisma.serie.findFirst({
+        where: { serieName: serieName },
+      });
+      if (!findSerie) {
         const newSerie = await prisma.serie.create({
           data: {
             serieName,
-            author,
-            status: { connect: { id: findStatus.id } },
             created_at: new Date(),
           },
         });
         serieConnect = { connect: { id: newSerie.id } };
-      } else if (findSerie) {
-        serieConnect = { connect: { id: findSerie.id } };
       }
-    
-      serieConnect = { connect: { id: findStatus.id } };
-      versionConnect = { connect: { id: findVersion.id } };
-    
-      return {
-        statusConnect,
-        versionConnect,
-        serieConnect,
-      };
+      serieConnect = { connect: { id: findSerie?.id } };   
     }
     
-
     const newBook = await prisma.book.create({
       data: {
-        image: image,
-        title: title,
+        image,
+        title,
         serie: serieConnect,
-        author: author,
-        category: category,
-        language: language,
-        library: library,
-        initDate: initDate,
-        finishDate: finishDate,
+        author,
+        category,
+        language,
+        library,
+        initDate,
+        finishDate,
         status: statusConnect,
-        rating: rating,
+        rating,
         comments,
         pages,
         version: versionConnect,
@@ -168,17 +176,13 @@ export async function PostBook(server: FastifyInstance) {
           })),
         },
         quotes: {
-          create: quotes
-            .filter((quote) => quote.trim() !== "")
-            .map((quote, page) => ({
-              quote,
-              page,
-              created_at: new Date(),
-            })),
+          connect: createdQuotes.map((quote) => ({
+            id: quote.id,
+          })),
         },
         collection: {
-          connect: createdCollection.map((collectionItem) => ({
-            id: collectionItem.id,
+          connect: createdCollection.map((collection) => ({
+            id: collection.id,
           })),
         },
         created_at: new Date(),
