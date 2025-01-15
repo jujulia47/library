@@ -1,60 +1,30 @@
-import React, { createContext, useContext, useState } from 'react';
-import type { Book, Collection, Flag, Serie } from '../typings/index';
+import React, { createContext, useState, ReactNode } from 'react';
+import type { Book, Collection, Flag, Serie, Version } from '../typings/index';
 
-export const GlobalContext = createContext(
-  {} as {
-    books: Book[];
-    setBooks: any;
-    series: Serie[];
-    setSeries: any;
-    collections: Collection[];
-    setCollections: any;
-    flags: Flag[];
-    setFlags: any;
-  },
-);
+// Definindo o formato do contexto
+type GlobalContextType = {
+  books: Book[];
+  setBooks: React.Dispatch<React.SetStateAction<Book[]>>;
+  series: Serie[];
+  setSeries: React.Dispatch<React.SetStateAction<Serie[]>>;
+  collections: Collection[];
+  setCollections: React.Dispatch<React.SetStateAction<Collection[]>>;
+  flags: Flag[];
+  setFlags: React.Dispatch<React.SetStateAction<Flag[]>>;
+  versions: Version[];
+  setVersions: React.Dispatch<React.SetStateAction<Version[]>>;
+};
 
-export const GlobalStorage = ({ children }: any) => {
-  // const [loading, setloading] = useState({
-  //   title: "",
-  //   author: "",
-  //   image: "",
-  //   category: "",
-  //   rating: "",
-  //   flags: [],
-  // });
+// Criando o contexto com o formato correto
+export const GlobalContext = createContext({} as GlobalContextType);
 
-  const [clear, setClear] = useState('');
-
-  const [books, setBooks] = useState([
-    {
-      image: '',
-      title: '',
-      serieName: '',
-      author: '',
-      category: '',
-      language: '',
-      library: false,
-      initDate: '',
-      finishDate: '',
-      finish: false,
-      rating: '',
-      flags: [],
-      quotes: [],
-      collections: [],
-    },
-  ]);
-
-  const [series, setSeries] = useState([
-    {
-      serieName: '',
-      concluded: false,
-      abandoned: false,
-    },
-  ]);
-
-  const [collections, setCollections] = useState([{ collectionName: '' }]);
-  const [flags, setFlags] = useState([{ flag: '' }]);
+// Provider do contexto
+export const GlobalStorage = ({ children }: { children: ReactNode }) => {
+  const [books, setBooks] = useState<Book[]>([]);
+  const [series, setSeries] = useState<Serie[]>([]);
+  const [collections, setCollections] = useState<Collection[]>([]);
+  const [flags, setFlags] = useState<Flag[]>([]);
+  const [versions, setVersions] = useState<Version[]>([]);
 
   return (
     <GlobalContext.Provider
@@ -63,18 +33,15 @@ export const GlobalStorage = ({ children }: any) => {
         setBooks,
         series,
         setSeries,
-        flags,
-        setFlags,
         collections,
         setCollections,
+        flags,
+        setFlags,
+        versions,
+        setVersions,
       }}
     >
       {children}
     </GlobalContext.Provider>
   );
-};
-
-export const useBooks = () => {
-  const booksContext = useContext(GlobalContext);
-  return booksContext;
 };

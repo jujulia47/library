@@ -1,22 +1,24 @@
 import React from 'react';
 import { GlobalStorage } from './context/index';
 
-import Home from './pages/Home/index';
-import NewBook from './pages/Forms/NewBook/index';
-import NewFlag from './pages/Flags/NewFlag/index';
-import NewCollection from './pages/Collection/NewCollection/index';
-import NewQuote from './pages/Quotes/NewQuote/index';
-import NewSerie from './pages/Series/NewSerie/index';
-import NewWishlist from './pages/Wishlist/NewWishlist/index';
+// import Home from './pages/Home/index';
+// import NewBook from './pages/Forms/NewBook/index';
+// import NewFlag from './pages/Flags/NewFlag/index';
+// import NewCollection from './pages/Collection/NewCollection/index';
+// import NewQuote from './pages/Quotes/NewQuote/index';
+// import NewSerie from './pages/Series/NewSerie/index';
+// import NewWishlist from './pages/Wishlist/NewWishlist/index';
+import Version from './pages/Forms/Version';
 
 import './styles/css/index.css';
 
 function App() {
   return (
     <GlobalStorage>
+      <Version />
       {/* <Home /> */}
-      <p>FORMULÁRIO NOVO LIVRO</p>
-      <NewBook />
+      {/* <p>FORMULÁRIO NOVO LIVRO</p>
+      <NewBook /> */}
       {/* <br />
       <p>FORMULÁRIO NOVA FLAG</p>
       <NewFlag />

@@ -1,19 +1,26 @@
+export interface Version {
+  bookVersion: string;
+}
+
+export interface Status {
+  bookStatus: string;
+}
+
 export interface Flag {
-  // id: string;
   flag: string;
-  // created_at: string;
 }
+
 export interface Collection {
-  // id: String;
   collectionName: string;
-  // created_at: String;
 }
+
 export interface Quote {
   id: String;
   quote: String;
   quoteId: String;
   created_at: String;
 }
+
 export interface Book {
   image: String;
   title: string;
@@ -30,8 +37,15 @@ export interface Book {
   quotes: Quote[];
   collections: Collection[];
 }
+
 export interface Serie {
   serieName: string;
   concluded: Boolean;
   abandoned: Boolean;
+}
+
+export interface Wishlist {
+  // serieName: string;
+  // concluded: Boolean;
+  // abandoned: Boolean;
 }
