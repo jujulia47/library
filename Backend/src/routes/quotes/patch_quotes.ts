@@ -10,7 +10,7 @@ export async function PatchQuote(server: FastifyInstance) {
     // objeto zod para o body
     const putBody = z.object({
       quote: z.string(),
-      page: z.number(),
+      page: z.string(),
       title: z.string().optional(),
     });
 

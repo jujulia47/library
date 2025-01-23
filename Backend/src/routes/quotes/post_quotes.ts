@@ -8,7 +8,7 @@ export async function PostQuote(server: FastifyInstance) {
   server.post("/quote", async (request) => {
     const quoteBody = z.object({
       quote: z.string(),
-      page: z.number(),
+      page: z.string(),
       title: z.string().optional(),
     });
 

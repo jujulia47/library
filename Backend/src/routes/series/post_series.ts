@@ -133,6 +133,11 @@ export async function PostSerie(server: FastifyInstance) {
               bookTitle: true,
             },
           },
+          flags: {
+            select: {
+              flag: true,
+            },
+          }
         },
       });
       return newSerie;

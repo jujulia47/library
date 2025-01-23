@@ -26,7 +26,7 @@ model Book {
   statusId   String?
   rating     String?
   comments   String?
-  pages      Int?
+  pages      String?
   version    Version?          @relation(fields: [versionId], references: [id])
   versionId  String?
   flags      FlagsArray[]
@@ -78,7 +78,7 @@ model QuotesArray {
   id         String   @id @default(uuid())
   quote      String?  @unique()
   quoteId    String?
-  page       Int?
+  page       String?
   book       Book?    @relation(fields: [quoteId], references: [id], onDelete: Cascade)
   created_at DateTime
 

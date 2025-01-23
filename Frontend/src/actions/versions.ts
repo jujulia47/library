@@ -1,14 +1,14 @@
 export async function getVersions() {
-  const fetchVersion = await fetch('http://localhost:3333/version');
+  const fetchVersion = await fetch("http://localhost:3333/version");
   const handleVersion = await fetchVersion.json();
-  console.log('handleVersion', handleVersion);
+  return handleVersion;
 }
 
 export async function postVersion(bookVersion: string) {
-  await fetch('http://localhost:3333/version', {
-    method: 'POST',
+  await fetch("http://localhost:3333/version", {
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     body: JSON.stringify({
       bookVersion,

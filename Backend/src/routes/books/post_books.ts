@@ -19,7 +19,7 @@ export async function PostBook(server: FastifyInstance) {
       bookStatus: z.string(),
       rating: z.string().optional().nullable(),
       comments: z.string().optional().nullable(),
-      pages: z.number().optional().default(0),
+      pages: z.string().optional(),
       bookVersion: z.string(),
       flags: z.array(z.string()).optional().default([]),
       quotes: z.array(z.string()).optional(),
