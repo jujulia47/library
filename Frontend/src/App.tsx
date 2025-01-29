@@ -21,7 +21,6 @@ function App() {
       {/* <p>FORMULÁRIO NOVA VERSÃO</p>
       <NewVersion /> */}
       {/* <Home /> */}
-      <p>FORMULÁRIO NOVO LIVRO</p>
       <NewBook />
       <br />
       {/* <p>FORMULÁRIO NOVA FLAG</p>

@@ -30,6 +30,10 @@ type GlobalContextType = {
   setFlags: React.Dispatch<React.SetStateAction<Flag[]>>;
   versions: Version[];
   setVersions: React.Dispatch<React.SetStateAction<Version[]>>;
+  updateVersions: Version[];
+  setUpdateVersions: React.Dispatch<React.SetStateAction<Version[]>>;
+  deleteVersions: Version[];
+  setDeleteVersions: React.Dispatch<React.SetStateAction<Version[]>>;
   status: Status[];
   setStatus: React.Dispatch<React.SetStateAction<Status[]>>;
   quote: Quote[];
@@ -48,6 +52,8 @@ export const GlobalStorage = ({ children }: { children: ReactNode }) => {
   const [collections, setCollections] = useState<Collection[]>([]);
   const [flags, setFlags] = useState<Flag[]>([]);
   const [versions, setVersions] = useState<Version[]>([]);
+  const [updateVersions, setUpdateVersions] = useState<Version[]>([]);
+  const [deleteVersions, setDeleteVersions] = useState<Version[]>([]);
   const [status, setStatus] = useState<Status[]>([]);
   const [quote, setQuote] = useState<Quote[]>([]);
   const [wishlist, setWishlist] = useState<Wishlist[]>([]);
@@ -169,6 +175,10 @@ export const GlobalStorage = ({ children }: { children: ReactNode }) => {
         setFlags,
         versions,
         setVersions,
+        updateVersions,
+        setUpdateVersions,
+        deleteVersions,
+        setDeleteVersions,
         status,
         setStatus,
         quote,

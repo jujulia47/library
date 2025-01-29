@@ -1,0 +1,20 @@
+.star-rating {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    margin: 4px auto;
+  }
+  
+  .star {
+    font-size: 2rem;
+    cursor: pointer;
+    color: var(--color-bg-light);
+    transition: color var(--transition), transform var(--transition);
+  }
+  
+  .star:hover,
+  .star.filled {
+    color: var(--color-yeloow);
+    transform: scale(0.9);
+  }

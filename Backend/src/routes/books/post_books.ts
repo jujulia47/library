@@ -150,8 +150,9 @@ export async function PostBook(server: FastifyInstance) {
           },
         });
         serieConnect = { connect: { id: newSerie.id } };
+      } else {
+        serieConnect = { connect: { id: findSerie.id } };
       }
-      serieConnect = { connect: { id: findSerie?.id } };   
     }
     
     const newBook = await prisma.book.create({
